@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: accountflow
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: DEBUG
+        value: False
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: accountflow-db
+          property: database
+      - key: DATABASE_USER
+        fromDatabase:
+          name: accountflow-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: accountflow-db
+          property: password
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: accountflow-db
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: accountflow-db
+          property: port
+
+databases:
+  - name: accountflow-db
+    databaseName: accountflow
+    user: accountflow_user
+    plan: free

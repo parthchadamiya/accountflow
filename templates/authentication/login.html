@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}Login — AccountFlow{% endblock %}
+
+{% block auth_content %}
+<div class="min-h-screen animated-bg flex items-center justify-center p-4 relative overflow-hidden">
+  <!-- Animated background orbs -->
+  <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none" style="animation-delay:1s"></div>
+  <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Grid pattern overlay -->
+  <div class="absolute inset-0 pointer-events-none"
+       style="background-image: linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px); background-size: 50px 50px;"></div>
+
+  <div class="relative w-full max-w-md animate-slide-up">
+    <!-- Logo section -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-700 neon-blue mb-4 animate-float">
+        <i data-lucide="trending-up" class="w-10 h-10 text-white"></i>
+      </div>
+      <h1 class="text-3xl font-black text-white tracking-tight">AccountFlow</h1>
+      <p class="text-slate-400 mt-1 text-sm">Finance Management Platform</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="glass rounded-2xl p-8 border border-slate-700/50 shadow-2xl"
+         x-data="{ loading: false, showPass: false }">
+      <h2 class="text-xl font-bold text-white mb-1">Welcome back</h2>
+      <p class="text-slate-400 text-sm mb-6">Sign in to your account to continue</p>
+
+      {% if messages %}
+      {% for message in messages %}
+      <div class="mb-4 flex items-center gap-2 bg-red-900/40 border border-red-500/30 rounded-xl px-4 py-3 animate-fade-in">
+        <i data-lucide="alert-circle" class="w-4 h-4 text-red-400 flex-shrink-0"></i>
+        <p class="text-sm text-red-300">{{ message }}</p>
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      <form method="post" @submit="loading = true" class="space-y-5">
+        {% csrf_token %}
+        <!-- Code Field -->
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">User Code</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="hash" class="w-4 h-4 text-slate-500"></i>
+            </div>
+            <input
+              type="text"
+              name="code"
+              value="{{ code|default:'' }}"
+              placeholder="e.g. ADMIN001"
+              required
+              class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-3 text-sm transition-all duration-200 focus:border-blue-500 focus:bg-slate-800"
+            />
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i data-lucide="lock" class="w-4 h-4 text-slate-500"></i>
+            </div>
+            <input
+              :type="showPass ? 'text' : 'password'"
+              name="password"
+              placeholder="Enter your password"
+              required
+              class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-12 py-3 text-sm transition-all duration-200 focus:border-blue-500 focus:bg-slate-800"
+            />
+            <button type="button" @click="showPass = !showPass"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200 transition-colors">
+              <i :data-lucide="showPass ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+                class="btn-primary w-full text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 mt-2 ripple"
+                :disabled="loading">
+          <template x-if="loading">
+            <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+          </template>
+          <template x-if="!loading">
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+          </template>
+          <span x-text="loading ? 'Signing in...' : 'Sign In'">Sign In</span>
+        </button>
+      </form>
+
+      <!-- Default Credentials hint -->
+      <div class="mt-6 p-3 bg-blue-900/20 border border-blue-500/20 rounded-xl">
+        <p class="text-xs text-blue-400 font-medium mb-1">Default Credentials</p>
+        <p class="text-xs text-slate-400">Code: <code class="text-blue-300 font-mono">ADMIN001</code></p>
+        <p class="text-xs text-slate-400">Password: <code class="text-blue-300 font-mono">Admin@123</code></p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-slate-600 text-xs mt-6">
+      © 2025 AccountFlow. All rights reserved.
+    </p>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+  document.addEventListener('alpine:init', () => {
+    setTimeout(() => lucide.createIcons(), 50);
+  });
+</script>
+{% endblock %}

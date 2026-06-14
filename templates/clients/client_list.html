@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block title %}Clients — AccountFlow{% endblock %}
+{% block page_title %}Clients{% endblock %}
+{% block page_subtitle %}Manage your client portfolio{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 animate-slide-up">
+  <div>
+    <div class="flex items-center gap-2 text-slate-400 text-sm">
+      <i data-lucide="users" class="w-4 h-4"></i>
+      <span>{{ clients|length }} client{{ clients|length|pluralize }}</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-3">
+    <!-- Search -->
+    <form method="get" class="relative">
+      <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+      <input type="text" name="q" value="{{ query }}" placeholder="Search clients..."
+             class="input-glow bg-slate-800/60 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-9 pr-4 py-2.5 text-sm w-56 transition-all" />
+    </form>
+    <a href="{% url 'client_create' %}" class="btn-primary text-white text-sm font-medium px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap">
+      <i data-lucide="user-plus" class="w-4 h-4"></i>
+      Add Client
+    </a>
+  </div>
+</div>
+
+<!-- Table Card -->
+<div class="glass rounded-2xl border border-slate-700/50 overflow-hidden animate-fade-in">
+  <div class="overflow-x-auto">
+    <table class="data-table w-full">
+      <thead>
+        <tr class="border-b border-slate-700/50 bg-slate-800/30">
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Client</th>
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">Code</th>
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Mobile</th>
+          <th class="text-right px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Opening Bal</th>
+          <th class="text-right px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Current Bal</th>
+          <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+          <th class="text-right px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-700/30">
+        {% for client in clients %}
+        <tr class="animate-fade-in" style="animation-delay: {{ forloop.counter0 }}0ms">
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {{ client.client_name|slice:":1"|upper }}
+              </div>
+              <div>
+                <a href="{% url 'client_detail' client.pk %}" class="text-sm font-semibold text-white hover:text-blue-400 transition-colors">
+                  {{ client.client_name }}
+                </a>
+                <p class="text-xs text-slate-500 md:hidden">{{ client.code }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-5 py-4 hidden md:table-cell">
+            <span class="text-xs font-mono bg-slate-800 text-blue-300 px-2 py-1 rounded-lg">{{ client.code }}</span>
+          </td>
+          <td class="px-5 py-4 hidden lg:table-cell">
+            <span class="text-sm text-slate-400">{{ client.mobile|default:"—" }}</span>
+          </td>
+          <td class="px-5 py-4 text-right">
+            <span class="text-sm font-medium text-slate-300">₹{{ client.opening_balance|floatformat:2 }}</span>
+          </td>
+          <td class="px-5 py-4 text-right">
+            <span class="text-sm font-bold {% if client.current_balance >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
+              ₹{{ client.current_balance|floatformat:2 }}
+            </span>
+          </td>
+          <td class="px-5 py-4 text-center">
+            {% if client.status == 'ACTIVE' %}
+            <span class="inline-flex items-center gap-1 text-xs font-medium text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Active
+            </span>
+            {% else %}
+            <span class="inline-flex items-center gap-1 text-xs font-medium text-slate-400 bg-slate-700/40 px-2.5 py-1 rounded-full">
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Inactive
+            </span>
+            {% endif %}
+          </td>
+          <td class="px-5 py-4 text-right">
+            <div class="flex items-center justify-end gap-1">
+              <a href="{% url 'client_detail' client.pk %}" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-400 hover:bg-blue-400/10 transition-all" title="View">
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+              </a>
+              <a href="{% url 'client_update' client.pk %}" class="p-1.5 rounded-lg text-slate-400 hover:text-yellow-400 hover:bg-yellow-400/10 transition-all" title="Edit">
+                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+              </a>
+              <form method="post" action="{% url 'client_delete' client.pk %}"
+                    x-data="{}"
+                    @submit.prevent="if(confirm('Delete {{ client.client_name }}? This cannot be undone.')) $el.submit()">
+                {% csrf_token %}
+                <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-all" title="Delete">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="px-5 py-16 text-center">
+            <div class="flex flex-col items-center gap-3">
+              <div class="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center animate-float">
+                <i data-lucide="users" class="w-7 h-7 text-slate-600"></i>
+              </div>
+              <p class="text-slate-400 font-medium">No clients found</p>
+              <p class="text-slate-600 text-sm">{% if query %}Try a different search term.{% else %}Add your first client to get started.{% endif %}</p>
+              {% if not query %}
+              <a href="{% url 'client_create' %}" class="btn-primary text-white text-sm font-medium px-4 py-2 rounded-xl flex items-center gap-2 mt-1">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add Client
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

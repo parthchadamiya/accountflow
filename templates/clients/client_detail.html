@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %}{{ client.client_name }} — AccountFlow{% endblock %}
+{% block page_title %}Client Details{% endblock %}
+{% block page_subtitle %}{{ client.client_name }}{% endblock %}
+
+{% block content %}
+<div class="space-y-5 animate-fade-in">
+  <!-- Back + Actions -->
+  <div class="flex items-center justify-between">
+    <a href="{% url 'client_list' %}" class="flex items-center gap-2 text-slate-400 hover:text-white text-sm transition-colors">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Clients
+    </a>
+    <div class="flex items-center gap-2">
+      <a href="{% url 'client_update' client.pk %}" class="px-4 py-2 rounded-xl border border-slate-600/50 text-slate-300 hover:text-white hover:border-slate-500 text-sm font-medium transition-all flex items-center gap-2">
+        <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+      </a>
+      <form method="post" action="{% url 'client_delete' client.pk %}"
+            x-data="{}" @submit.prevent="if(confirm('Delete this client?')) $el.submit()">
+        {% csrf_token %}
+        <button type="submit" class="px-4 py-2 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 text-sm font-medium transition-all flex items-center gap-2">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Profile Card -->
+  <div class="glass rounded-2xl border border-slate-700/50 p-6">
+    <div class="flex flex-col sm:flex-row sm:items-center gap-5">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white font-black text-2xl flex-shrink-0 animate-float">
+        {{ client.client_name|slice:":1"|upper }}
+      </div>
+      <div class="flex-1">
+        <h2 class="text-2xl font-black text-white">{{ client.client_name }}</h2>
+        <div class="flex flex-wrap items-center gap-3 mt-2">
+          <span class="text-xs font-mono bg-slate-800 text-blue-300 px-2.5 py-1 rounded-lg">{{ client.code }}</span>
+          {% if client.status == 'ACTIVE' %}
+          <span class="inline-flex items-center gap-1 text-xs text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Active
+          </span>
+          {% else %}
+          <span class="inline-flex items-center gap-1 text-xs text-slate-400 bg-slate-700/40 px-2.5 py-1 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Inactive
+          </span>
+          {% endif %}
+          <span class="text-xs text-slate-500">Since {{ client.created_at|date:"M d, Y" }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info + Balance Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+    <!-- Contact Info -->
+    <div class="lg:col-span-2 glass rounded-2xl border border-slate-700/50 p-5">
+      <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
+        <i data-lucide="contact" class="w-4 h-4 text-blue-400"></i> Contact Information
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-slate-800/40 rounded-xl p-3">
+          <p class="text-xs text-slate-500 mb-1">Mobile</p>
+          <p class="text-sm text-white font-medium">{{ client.mobile|default:"—" }}</p>
+        </div>
+        <div class="bg-slate-800/40 rounded-xl p-3">
+          <p class="text-xs text-slate-500 mb-1">Email</p>
+          <p class="text-sm text-white font-medium">{{ client.email|default:"—" }}</p>
+        </div>
+        <div class="bg-slate-800/40 rounded-xl p-3 sm:col-span-2">
+          <p class="text-xs text-slate-500 mb-1">Address</p>
+          <p class="text-sm text-white font-medium">{{ client.address|default:"—" }}</p>
+        </div>
+        <div class="bg-slate-800/40 rounded-xl p-3">
+          <p class="text-xs text-slate-500 mb-1">Created By</p>
+          <p class="text-sm text-white font-medium">{{ client.created_by.name|default:"—" }}</p>
+        </div>
+        <div class="bg-slate-800/40 rounded-xl p-3">
+          <p class="text-xs text-slate-500 mb-1">Last Updated</p>
+          <p class="text-sm text-white font-medium">{{ client.updated_at|date:"M d, Y H:i" }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Balance -->
+    <div class="space-y-4">
+      <div class="glass rounded-2xl border border-slate-700/50 p-5">
+        <p class="text-xs text-slate-500 mb-1">Opening Balance</p>
+        <p class="text-2xl font-black text-white">₹{{ client.opening_balance|floatformat:2 }}</p>
+      </div>
+      <div class="glass rounded-2xl border {% if client.current_balance >= 0 %}border-green-500/30{% else %}border-red-500/30{% endif %} p-5">
+        <p class="text-xs text-slate-500 mb-1">Current Balance</p>
+        <p class="text-2xl font-black {% if client.current_balance >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
+          ₹{{ client.current_balance|floatformat:2 }}
+        </p>
+        <p class="text-xs text-slate-500 mt-1">
+          {% if client.current_balance >= client.opening_balance %}
+            <span class="text-green-400">▲ Gained</span>
+          {% else %}
+            <span class="text-red-400">▼ Lost</span>
+          {% endif %}
+          from opening
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transactions -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+    <!-- Sent Transactions -->
+    <div class="glass rounded-2xl border border-slate-700/50 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-700/50 flex items-center gap-2">
+        <i data-lucide="arrow-up-right" class="w-4 h-4 text-red-400"></i>
+        <h3 class="text-white font-semibold text-sm">Sent (Debited)</h3>
+      </div>
+      <div class="divide-y divide-slate-700/30">
+        {% for tx in sent %}
+        <div class="px-5 py-3.5 flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-white">{{ tx.receiver_client.client_name }}</p>
+            <p class="text-xs text-slate-500">{{ tx.transaction_date }} • {{ tx.description|default:"—" }}</p>
+          </div>
+          <span class="text-sm font-bold text-red-400">-₹{{ tx.amount|floatformat:2 }}</span>
+        </div>
+        {% empty %}
+        <div class="px-5 py-8 text-center text-slate-600 text-sm">No sent transactions</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Received Transactions -->
+    <div class="glass rounded-2xl border border-slate-700/50 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-700/50 flex items-center gap-2">
+        <i data-lucide="arrow-down-left" class="w-4 h-4 text-green-400"></i>
+        <h3 class="text-white font-semibold text-sm">Received (Credited)</h3>
+      </div>
+      <div class="divide-y divide-slate-700/30">
+        {% for tx in received %}
+        <div class="px-5 py-3.5 flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-white">{{ tx.sender_client.client_name }}</p>
+            <p class="text-xs text-slate-500">{{ tx.transaction_date }} • {{ tx.description|default:"—" }}</p>
+          </div>
+          <span class="text-sm font-bold text-green-400">+₹{{ tx.amount|floatformat:2 }}</span>
+        </div>
+        {% empty %}
+        <div class="px-5 py-8 text-center text-slate-600 text-sm">No received transactions</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

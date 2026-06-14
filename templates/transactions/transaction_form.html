@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}New Transfer — AccountFlow{% endblock %}
+{% block page_title %}New Transfer{% endblock %}
+{% block page_subtitle %}Transfer funds between clients{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto animate-slide-up">
+  <div class="glass rounded-2xl border border-slate-700/50 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-700/50 bg-gradient-to-r from-purple-500/10 to-blue-500/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+          <i data-lucide="arrow-left-right" class="w-5 h-5 text-purple-400"></i>
+        </div>
+        <div>
+          <h3 class="text-white font-semibold">Create Transaction</h3>
+          <p class="text-slate-400 text-xs">Funds will be transferred instantly</p>
+        </div>
+      </div>
+    </div>
+
+    <form method="post" class="p-6 space-y-5"
+          x-data="{
+            senderId: '',
+            receiverId: '',
+            sameError: false,
+            checkSame() { this.sameError = this.senderId && this.receiverId && this.senderId === this.receiverId; }
+          }">
+      {% csrf_token %}
+
+      <!-- Sender -->
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1.5">Sender Client <span class="text-red-400">*</span></label>
+        <div class="relative">
+          <i data-lucide="arrow-up-right" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-400 pointer-events-none"></i>
+          <select name="sender_client" required x-model="senderId" @change="checkSame()"
+                  class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all appearance-none cursor-pointer">
+            <option value="">-- Select Sender --</option>
+            {% for client in clients %}
+            <option value="{{ client.pk }}">{{ client.client_name }} ({{ client.code }}) — ₹{{ client.current_balance|floatformat:2 }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Arrow indicator -->
+      <div class="flex items-center justify-center">
+        <div class="flex items-center gap-3">
+          <div class="h-px w-16 bg-gradient-to-r from-transparent to-slate-600"></div>
+          <div class="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+            <i data-lucide="arrow-down" class="w-4 h-4 text-blue-400"></i>
+          </div>
+          <div class="h-px w-16 bg-gradient-to-l from-transparent to-slate-600"></div>
+        </div>
+      </div>
+
+      <!-- Receiver -->
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1.5">Receiver Client <span class="text-red-400">*</span></label>
+        <div class="relative">
+          <i data-lucide="arrow-down-left" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-400 pointer-events-none"></i>
+          <select name="receiver_client" required x-model="receiverId" @change="checkSame()"
+                  class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all appearance-none cursor-pointer">
+            <option value="">-- Select Receiver --</option>
+            {% for client in clients %}
+            <option value="{{ client.pk }}">{{ client.client_name }} ({{ client.code }}) — ₹{{ client.current_balance|floatformat:2 }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <p x-show="sameError" class="text-xs text-red-400 mt-1 flex items-center gap-1">
+          <i data-lucide="alert-triangle" class="w-3 h-3"></i>
+          Sender and receiver cannot be the same client.
+        </p>
+      </div>
+
+      <!-- Amount -->
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1.5">Amount <span class="text-red-400">*</span></label>
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm pointer-events-none">₹</span>
+          <input type="number" name="amount" step="0.01" min="0.01" required
+                 placeholder="0.00"
+                 class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-8 pr-4 py-2.5 text-sm transition-all" />
+        </div>
+      </div>
+
+      <!-- Transaction Date -->
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1.5">Transaction Date</label>
+        <div class="relative">
+          <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+          <input type="date" name="transaction_date"
+                 value="{% now 'Y-m-d' %}"
+                 class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all" />
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1.5">Description</label>
+        <div class="relative">
+          <i data-lucide="file-text" class="absolute left-3 top-3 w-4 h-4 text-slate-500 pointer-events-none"></i>
+          <textarea name="description" rows="2" placeholder="Optional note about this transfer..."
+                    class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all resize-none"></textarea>
+        </div>
+      </div>
+
+      <!-- Alert box -->
+      <div class="bg-amber-900/20 border border-amber-500/20 rounded-xl p-3 flex items-start gap-2">
+        <i data-lucide="info" class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5"></i>
+        <p class="text-xs text-amber-300">
+          The sender's balance will be <strong>decreased</strong> and the receiver's balance will be <strong>increased</strong> by the entered amount.
+        </p>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-700/50">
+        <a href="{% url 'transaction_list' %}" class="px-5 py-2.5 rounded-xl border border-slate-600/50 text-slate-300 hover:text-white hover:border-slate-500 text-sm font-medium transition-all">
+          Cancel
+        </a>
+        <button type="submit" :disabled="sameError" class="btn-primary text-white text-sm font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          Execute Transfer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
