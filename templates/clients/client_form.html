@@ -4,96 +4,88 @@
 {% block page_subtitle %}{% if action == 'Create' %}Add a new client to your portfolio{% else %}Update client information{% endif %}{% endblock %}
 
 {% block content %}
-{# client = model instance (Update), prefill = dict on POST error (Create), both may be absent on fresh Create #}
-<div class="max-w-2xl mx-auto animate-slide-up">
-  <div class="glass rounded-2xl border border-slate-700/50 overflow-hidden">
-    <!-- Form Header -->
-    <div class="px-6 py-5 border-b border-slate-700/50 bg-gradient-to-r from-blue-500/10 to-indigo-500/10">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-          <i data-lucide="{% if action == 'Create' %}user-plus{% else %}user-cog{% endif %}" class="w-5 h-5 text-blue-400"></i>
+{# client = model instance (Update), prefill = dict on POST error (Create) #}
+<div style="max-width:640px;margin:0 auto" class="animate-slide-up">
+  <div class="card" style="overflow:hidden">
+    <div class="card-header" style="background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.05))">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:11px;background:rgba(99,102,241,.12);display:flex;align-items:center;justify-content:center">
+          <i data-lucide="{% if action == 'Create' %}user-plus{% else %}user-cog{% endif %}" style="width:18px;height:18px;color:var(--accent)"></i>
         </div>
         <div>
-          <h3 class="text-white font-semibold">{{ action }} Client</h3>
-          <p class="text-slate-400 text-xs">Fill in all required fields</p>
+          <p style="font-size:15px;font-weight:700;color:var(--text)">{{ action }} Client</p>
+          <p style="font-size:12px;color:var(--text3);margin-top:2px">Fill in all required fields marked with *</p>
         </div>
       </div>
     </div>
 
-    <!-- Form Body -->
-    <form method="post" class="p-6 space-y-5">
+    <form method="post" class="card-body">
       {% csrf_token %}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <!-- Client Name -->
-        <div class="sm:col-span-2">
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Client Name <span class="text-red-400">*</span></label>
-          <div class="relative">
-            <i data-lucide="building-2" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+        <div style="grid-column:1/-1">
+          <label class="form-label">Client Name <span style="color:var(--red)">*</span></label>
+          <div class="input-wrap">
+            <i data-lucide="building-2" class="input-icon"></i>
             <input type="text" name="client_name" required
                    value="{% if client %}{{ client.client_name }}{% elif prefill %}{{ prefill.client_name }}{% endif %}"
-                   placeholder="e.g. Acme Corporation"
-                   class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all" />
+                   placeholder="e.g. Acme Corporation" class="form-input" />
           </div>
         </div>
 
         <!-- Code -->
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Client Code <span class="text-red-400">*</span></label>
-          <div class="relative">
-            <i data-lucide="hash" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+          <label class="form-label">Client Code <span style="color:var(--red)">*</span></label>
+          <div class="input-wrap">
+            <i data-lucide="hash" class="input-icon"></i>
             <input type="text" name="code" required
                    value="{% if client %}{{ client.code }}{% elif prefill %}{{ prefill.code }}{% endif %}"
-                   placeholder="e.g. C001"
-                   class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all uppercase" />
+                   placeholder="e.g. C001" style="text-transform:uppercase" class="form-input font-mono" />
           </div>
         </div>
 
         <!-- Mobile -->
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Mobile</label>
-          <div class="relative">
-            <i data-lucide="phone" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+          <label class="form-label">Mobile</label>
+          <div class="input-wrap">
+            <i data-lucide="phone" class="input-icon"></i>
             <input type="text" name="mobile"
                    value="{% if client %}{{ client.mobile }}{% elif prefill %}{{ prefill.mobile }}{% endif %}"
-                   placeholder="e.g. 9876543210"
-                   class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all" />
+                   placeholder="e.g. 9876543210" class="form-input" />
           </div>
         </div>
 
         <!-- Email -->
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
-          <div class="relative">
-            <i data-lucide="mail" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+          <label class="form-label">Email</label>
+          <div class="input-wrap">
+            <i data-lucide="mail" class="input-icon"></i>
             <input type="email" name="email"
                    value="{% if client %}{{ client.email }}{% elif prefill %}{{ prefill.email }}{% endif %}"
-                   placeholder="client@example.com"
-                   class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all" />
+                   placeholder="client@example.com" class="form-input" />
           </div>
         </div>
 
-        <!-- Opening Balance (only shown on Create) -->
+        <!-- Opening Balance (Create only) -->
         {% if action == 'Create' %}
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Opening Balance</label>
-          <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm pointer-events-none">₹</span>
+          <label class="form-label">Opening Balance</label>
+          <div class="input-wrap">
+            <span class="input-icon" style="font-size:13px;font-weight:600">₹</span>
             <input type="number" name="opening_balance" step="0.01" min="0"
                    value="{% if prefill %}{{ prefill.opening_balance }}{% else %}0{% endif %}"
-                   placeholder="0.00"
-                   class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-8 pr-4 py-2.5 text-sm transition-all" />
+                   placeholder="0.00" class="form-input" />
           </div>
         </div>
         {% endif %}
 
         <!-- Status -->
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Status</label>
-          <div class="relative">
-            <i data-lucide="toggle-right" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
-            <select name="status"
-                    class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all appearance-none cursor-pointer">
+          <label class="form-label">Status</label>
+          <div class="input-wrap">
+            <i data-lucide="toggle-right" class="input-icon"></i>
+            <select name="status" class="form-input" style="cursor:pointer">
               <option value="ACTIVE"
                 {% if client.status == 'ACTIVE' %}selected
                 {% elif prefill.status == 'ACTIVE' %}selected
@@ -106,25 +98,22 @@
         </div>
 
         <!-- Address -->
-        <div class="sm:col-span-2">
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Address</label>
-          <div class="relative">
-            <i data-lucide="map-pin" class="absolute left-3 top-3 w-4 h-4 text-slate-500 pointer-events-none"></i>
-            <textarea name="address" rows="3"
-                      placeholder="Client's full address..."
-                      class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all resize-none">{% if client %}{{ client.address }}{% elif prefill %}{{ prefill.address }}{% endif %}</textarea>
+        <div style="grid-column:1/-1">
+          <label class="form-label">Address</label>
+          <div class="input-wrap">
+            <i data-lucide="map-pin" class="input-icon" style="top:14px;transform:none"></i>
+            <textarea name="address" rows="3" placeholder="Client's full address…"
+                      class="form-input" style="padding-top:10px;padding-bottom:10px;resize:none">{% if client %}{{ client.address }}{% elif prefill %}{{ prefill.address }}{% endif %}</textarea>
           </div>
         </div>
       </div>
 
-      <!-- Actions -->
-      <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-700/50">
-        <a href="{% url 'client_list' %}"
-           class="px-5 py-2.5 rounded-xl border border-slate-600/50 text-slate-300 hover:text-white hover:border-slate-500 text-sm font-medium transition-all">
-          Cancel
-        </a>
-        <button type="submit" class="btn-primary text-white text-sm font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2">
-          <i data-lucide="{% if action == 'Create' %}user-plus{% else %}save{% endif %}" class="w-4 h-4"></i>
+      <hr class="divider" style="margin:20px 0">
+
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px">
+        <a href="{% url 'client_list' %}" class="btn btn-ghost">Cancel</a>
+        <button type="submit" class="btn btn-primary">
+          <i data-lucide="{% if action == 'Create' %}user-plus{% else %}save{% endif %}" style="width:14px;height:14px"></i>
           {{ action }} Client
         </button>
       </div>

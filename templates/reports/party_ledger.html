@@ -1,39 +1,35 @@
 {% extends 'base.html' %}
 {% block title %}Party Ledger — AccountFlow{% endblock %}
 {% block page_title %}Party Ledger{% endblock %}
-{% block page_subtitle %}Transaction statement for a client between dates{% endblock %}
+{% block page_subtitle %}Transaction statement for a client between selected dates{% endblock %}
 
 {% block content %}
-
-<!-- Search Filter Card -->
-<div class="glass rounded-2xl border border-slate-700/50 p-5 mb-5 animate-slide-up">
-  <form method="get" class="flex flex-wrap items-end gap-4">
-    <!-- Client Code -->
-    <div class="flex-1 min-w-[180px]">
-      <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-        Client Code
-      </label>
-      <div class="relative" x-data="{ open: false, search: '{{ code }}' }">
-        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
-        <input type="text" name="code" id="client-code-input"
-               value="{{ code }}"
-               placeholder="e.g. C001"
+<!-- Filter card -->
+<div class="card animate-slide-up" style="padding:18px;margin-bottom:16px">
+  <form method="get" style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px">
+    <!-- Client Code with autocomplete -->
+    <div style="flex:1;min-width:180px">
+      <label class="form-label">Client Code</label>
+      <div class="input-wrap" x-data="{open:false,q:'{{ code }}'}">
+        <i data-lucide="search" class="input-icon"></i>
+        <input type="text" name="code" id="code-inp"
+               value="{{ code }}" placeholder="e.g. C001"
                autocomplete="off"
-               @input="open = $el.value.length > 0; search = $el.value.toUpperCase()"
-               @focus="open = $el.value.length > 0"
-               @blur.window="setTimeout(() => open = false, 200)"
-               class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-9 pr-4 py-2.5 text-sm transition-all uppercase font-mono" />
-
-        <!-- Autocomplete dropdown -->
+               class="form-input font-mono"
+               style="text-transform:uppercase"
+               @input="open=$el.value.length>0; q=$el.value.toUpperCase()"
+               @focus="open=$el.value.length>0"
+               @blur.window="setTimeout(()=>open=false,200)" />
         <div x-show="open" x-cloak
-             class="absolute z-50 top-full mt-1 w-full glass rounded-xl border border-slate-600/50 shadow-2xl max-h-48 overflow-y-auto">
+             style="position:absolute;top:100%;left:0;right:0;z-index:100;margin-top:4px;background:var(--card);border:1px solid var(--border);border-radius:10px;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px var(--shadow)">
           {% for c in all_clients %}
           <button type="button"
-                  x-show="'{{ c.code }}'.includes(search) || '{{ c.client_name|upper }}'.includes(search)"
-                  @click="$refs.codeInput.value = '{{ c.code }}'; search='{{ c.code }}'; open=false; document.getElementById('client-code-input').value='{{ c.code }}'"
-                  class="w-full text-left px-4 py-2.5 hover:bg-blue-500/20 transition-colors flex items-center justify-between gap-3">
-            <span class="text-sm text-white font-medium">{{ c.client_name }}</span>
-            <span class="text-xs font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded flex-shrink-0">{{ c.code }}</span>
+                  x-show="'{{ c.code }}'.includes(q)||'{{ c.client_name|upper }}'.includes(q)"
+                  @click="document.getElementById('code-inp').value='{{ c.code }}';q='{{ c.code }}';open=false"
+                  style="width:100%;text-align:left;padding:9px 14px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:background .1s;font-family:inherit"
+                  onmouseover="this.style.background='var(--nav-bg)'" onmouseout="this.style.background='none'">
+            <span style="font-size:13px;color:var(--text);font-weight:500">{{ c.client_name }}</span>
+            <span class="code-chip">{{ c.code }}</span>
           </button>
           {% endfor %}
         </div>
@@ -41,235 +37,194 @@
     </div>
 
     <!-- Start Date -->
-    <div class="flex-1 min-w-[160px]">
-      <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-        Start Date
-      </label>
-      <div class="relative">
-        <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
-        <input type="date" name="start_date" value="{{ start_date }}"
-               class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white rounded-xl pl-9 pr-4 py-2.5 text-sm transition-all" />
+    <div style="flex:1;min-width:155px">
+      <label class="form-label">Start Date</label>
+      <div class="input-wrap">
+        <i data-lucide="calendar" class="input-icon"></i>
+        <input type="date" name="start_date" value="{{ start_date }}" class="form-input" />
       </div>
     </div>
 
     <!-- End Date -->
-    <div class="flex-1 min-w-[160px]">
-      <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-        End Date
-      </label>
-      <div class="relative">
-        <i data-lucide="calendar-check" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
-        <input type="date" name="end_date" value="{{ end_date }}"
-               class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white rounded-xl pl-9 pr-4 py-2.5 text-sm transition-all" />
+    <div style="flex:1;min-width:155px">
+      <label class="form-label">End Date</label>
+      <div class="input-wrap">
+        <i data-lucide="calendar-check" class="input-icon"></i>
+        <input type="date" name="end_date" value="{{ end_date }}" class="form-input" />
       </div>
     </div>
 
-    <!-- Submit -->
-    <button type="submit"
-            class="btn-primary text-white font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap self-end">
-      <i data-lucide="search" class="w-4 h-4"></i> Search
-    </button>
-
-    {% if searched %}
-    <a href="{% url 'party_ledger' %}"
-       class="px-4 py-2.5 rounded-xl border border-slate-600/50 text-slate-400 hover:text-white hover:border-slate-500 text-sm font-medium transition-all flex items-center gap-2 self-end">
-      <i data-lucide="x" class="w-4 h-4"></i> Clear
-    </a>
-    {% endif %}
+    <div style="display:flex;gap:8px">
+      <button type="submit" class="btn btn-primary">
+        <i data-lucide="search" style="width:14px;height:14px"></i> Search
+      </button>
+      {% if searched %}
+      <a href="{% url 'party_ledger' %}" class="btn btn-ghost">
+        <i data-lucide="x" style="width:14px;height:14px"></i> Clear
+      </a>
+      {% endif %}
+    </div>
   </form>
 </div>
 
 <!-- Error -->
 {% if error %}
-<div class="glass rounded-2xl border border-red-500/30 bg-red-900/20 px-5 py-4 flex items-center gap-3 mb-5 animate-fade-in">
-  <i data-lucide="alert-circle" class="w-5 h-5 text-red-400 flex-shrink-0"></i>
-  <p class="text-sm text-red-300">{{ error }}</p>
+<div class="alert alert-red animate-fade-in" style="margin-bottom:14px">
+  <i data-lucide="alert-circle" style="width:14px;height:14px;flex-shrink:0"></i>
+  {{ error }}
 </div>
 {% endif %}
 
 {% if searched and client %}
-<!-- Client Info Bar -->
-<div class="glass rounded-2xl border border-blue-500/20 bg-blue-500/5 px-5 py-4 mb-5 animate-fade-in flex flex-wrap items-center gap-4 justify-between">
-  <div class="flex items-center gap-3">
-    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white font-black text-lg flex-shrink-0">
-      {{ client.client_name|slice:":1"|upper }}
+<!-- Client info banner -->
+<div class="card animate-fade-in" style="padding:16px 20px;margin-bottom:14px;background:var(--glow);border-color:rgba(99,102,241,.2)">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0">
+        {{ client.client_name|slice:":1"|upper }}
+      </div>
+      <div>
+        <p style="font-size:15px;font-weight:700;color:var(--text)">{{ client.client_name }}</p>
+        <p style="font-size:12px;color:var(--text2);margin-top:2px">
+          <span class="code-chip">{{ client.code }}</span>
+          {% if client.mobile %} · {{ client.mobile }}{% endif %}
+        </p>
+      </div>
     </div>
-    <div>
-      <h3 class="text-white font-bold">{{ client.client_name }}</h3>
-      <p class="text-xs text-slate-400">
-        <span class="font-mono text-blue-300">{{ client.code }}</span>
-        {% if client.mobile %} · {{ client.mobile }}{% endif %}
-        {% if client.email %} · {{ client.email }}{% endif %}
-      </p>
-    </div>
-  </div>
-  <div class="flex flex-wrap gap-4 text-right">
-    <div>
-      <p class="text-xs text-slate-500">Period</p>
-      <p class="text-sm font-semibold text-white">{{ start_date }} → {{ end_date }}</p>
-    </div>
-    <div>
-      <p class="text-xs text-slate-500">Opening Balance</p>
-      <p class="text-sm font-bold {% if opening_balance >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
-        {{ opening_balance|floatformat:2 }}
-      </p>
-    </div>
-    <div>
-      <p class="text-xs text-slate-500">Closing Balance</p>
-      <p class="text-sm font-bold {% if closing_balance >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
-        {{ closing_balance|floatformat:2 }}
-      </p>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div style="text-align:right">
+        <p style="font-size:10.5px;color:var(--text3)">Period</p>
+        <p style="font-size:13px;font-weight:600;color:var(--text)">{{ start_date }} → {{ end_date }}</p>
+      </div>
+      <div style="text-align:right">
+        <p style="font-size:10.5px;color:var(--text3)">Opening Balance</p>
+        <p style="font-size:14px;font-weight:700;color:{% if opening_balance >= 0 %}var(--cr){% else %}var(--dr){% endif %}">
+          {{ opening_balance|floatformat:2 }}
+        </p>
+      </div>
+      <div style="text-align:right">
+        <p style="font-size:10.5px;color:var(--text3)">Closing Balance</p>
+        <p style="font-size:14px;font-weight:700;color:{% if closing_balance >= 0 %}var(--cr){% else %}var(--dr){% endif %}">
+          {{ closing_balance|floatformat:2 }}
+        </p>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Summary Stats -->
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5 animate-fade-in">
-  <div class="glass rounded-xl border border-slate-700/50 p-4 text-center">
-    <p class="text-xs text-slate-500 mb-1">Transactions</p>
-    <p class="text-xl font-black text-white">{{ ledger_rows|length }}</p>
+<!-- Summary stats -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px" class="animate-fade-in pl-sum">
+  <div class="stat-card" style="padding:14px 16px;text-align:center">
+    <p style="font-size:11px;color:var(--text3);margin-bottom:6px">Transactions</p>
+    <p style="font-size:20px;font-weight:800;color:var(--text)">{{ ledger_rows|length }}</p>
   </div>
-  <div class="glass rounded-xl border border-green-500/20 p-4 text-center">
-    <p class="text-xs text-slate-500 mb-1">Total Credit (In)</p>
-    <p class="text-xl font-black text-green-400">{{ total_credit|floatformat:2 }}</p>
+  <div class="stat-card" style="padding:14px 16px;text-align:center;border-color:rgba(16,185,129,.2)">
+    <p style="font-size:11px;color:var(--text3);margin-bottom:6px">Credit (In)</p>
+    <p style="font-size:20px;font-weight:800;color:var(--cr)">{{ total_credit|floatformat:2 }}</p>
   </div>
-  <div class="glass rounded-xl border border-red-500/20 p-4 text-center">
-    <p class="text-xs text-slate-500 mb-1">Total Debit (Out)</p>
-    <p class="text-xl font-black text-red-400">{{ total_debit|floatformat:2 }}</p>
+  <div class="stat-card" style="padding:14px 16px;text-align:center;border-color:rgba(239,68,68,.2)">
+    <p style="font-size:11px;color:var(--text3);margin-bottom:6px">Debit (Out)</p>
+    <p style="font-size:20px;font-weight:800;color:var(--dr)">{{ total_debit|floatformat:2 }}</p>
   </div>
-  <div class="glass rounded-xl border border-purple-500/20 p-4 text-center">
-    <p class="text-xs text-slate-500 mb-1">Net Movement</p>
-    <p class="text-xl font-black {% if total_credit >= total_debit %}text-green-400{% else %}text-red-400{% endif %}">
+  <div class="stat-card" style="padding:14px 16px;text-align:center;border-color:rgba(139,92,246,.2)">
+    <p style="font-size:11px;color:var(--text3);margin-bottom:6px">Net Movement</p>
+    <p style="font-size:20px;font-weight:800;color:{% if total_credit >= total_debit %}var(--cr){% else %}var(--dr){% endif %}">
       {% if total_credit >= total_debit %}+{% endif %}{{ total_credit|floatformat:2 }}
     </p>
   </div>
 </div>
 
-<!-- Ledger Table -->
-<div class="glass rounded-2xl border border-slate-700/50 overflow-hidden animate-fade-in" id="ledger-table">
-  <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700/50">
-    <div class="flex items-center gap-2">
-      <i data-lucide="book-open" class="w-4 h-4 text-blue-400"></i>
-      <h3 class="text-white font-semibold text-sm">Ledger Statement</h3>
+<!-- Ledger table -->
+<div class="card animate-fade-in" style="overflow:hidden">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:8px">
+      <i data-lucide="book-open" style="width:15px;height:15px;color:var(--accent)"></i>
+      <p style="font-size:14px;font-weight:700;color:var(--text)">Ledger Statement</p>
     </div>
-    <button onclick="window.print()"
-            class="flex items-center gap-2 text-xs text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-all">
-      <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
+    <button onclick="window.print()" class="btn btn-ghost btn-sm no-print">
+      <i data-lucide="printer" style="width:13px;height:13px"></i> Print
     </button>
   </div>
 
-  <div class="overflow-x-auto">
-    <table class="w-full text-sm data-table">
+  <div style="overflow-x:auto">
+    <table class="af-table">
       <thead>
-        <tr class="border-b border-slate-700/50 bg-slate-800/40">
-          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">Date</th>
-          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Txn ID</th>
-          <th class="text-right px-4 py-3 text-xs font-semibold text-green-500 uppercase tracking-wider">Credit (In)</th>
-          <th class="text-right px-4 py-3 text-xs font-semibold text-red-500 uppercase tracking-wider">Debit (Out)</th>
-          <th class="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Balance</th>
-          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Party</th>
-          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Remarks</th>
+        <tr>
+          <th>Date</th>
+          <th>Txn#</th>
+          <th class="r" style="color:var(--cr)">Credit (In)</th>
+          <th class="r" style="color:var(--dr)">Debit (Out)</th>
+          <th class="r">Balance</th>
+          <th>Party</th>
+          <th>Remarks</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-700/25">
-        <!-- Opening Balance Row -->
-        <tr class="bg-blue-500/8 border-l-2 border-l-blue-500">
-          <td class="px-4 py-3 text-xs text-slate-400 whitespace-nowrap">{{ start_date }}</td>
-          <td class="px-4 py-3">
-            <span class="text-xs font-mono text-slate-500">—</span>
+      <tbody>
+        <!-- Opening Balance -->
+        <tr style="background:rgba(99,102,241,.05);border-left:3px solid var(--accent)">
+          <td style="font-size:12px;color:var(--text2)">{{ start_date }}</td>
+          <td><span style="font-size:12px;color:var(--text3)">—</span></td>
+          <td class="r">
+            {% if opening_balance > 0 %}<span style="font-weight:700;color:var(--cr)">{{ opening_balance|floatformat:2 }}</span>
+            {% else %}<span style="color:var(--text3);font-size:12px">0.00</span>{% endif %}
           </td>
-          <td class="px-4 py-3 text-right">
-            {% if opening_balance > 0 %}
-            <span class="text-sm font-bold text-green-400">{{ opening_balance|floatformat:2 }}</span>
-            {% else %}<span class="text-slate-600 text-xs">0.00</span>{% endif %}
+          <td class="r">
+            {% if opening_balance < 0 %}<span style="font-weight:700;color:var(--dr)">{{ opening_balance|floatformat:2 }}</span>
+            {% else %}<span style="color:var(--text3);font-size:12px">0.00</span>{% endif %}
           </td>
-          <td class="px-4 py-3 text-right">
-            {% if opening_balance < 0 %}
-            <span class="text-sm font-bold text-red-400">{{ opening_balance|floatformat:2 }}</span>
-            {% else %}<span class="text-slate-600 text-xs">0.00</span>{% endif %}
+          <td class="r">
+            <span style="font-weight:700;color:{% if opening_balance >= 0 %}var(--cr){% else %}var(--dr){% endif %}">{{ opening_balance|floatformat:2 }}</span>
           </td>
-          <td class="px-4 py-3 text-right">
-            <span class="text-sm font-bold {% if opening_balance >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
-              {{ opening_balance|floatformat:2 }}
-            </span>
-          </td>
-          <td class="px-4 py-3"></td>
-          <td class="px-4 py-3">
-            <span class="text-xs font-semibold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">Opening Balance</span>
-          </td>
+          <td></td>
+          <td><span class="badge badge-accent" style="font-size:11px">Opening Balance</span></td>
         </tr>
 
-        <!-- Transaction Rows -->
         {% for row in ledger_rows %}
-        <tr class="hover:bg-slate-800/30 transition-colors">
-          <td class="px-4 py-3 text-xs text-slate-400 whitespace-nowrap">{{ row.date }}</td>
-          <td class="px-4 py-3">
-            <a href="{% url 'transaction_detail' row.id %}"
-               class="text-xs font-mono text-blue-400 hover:text-blue-300 hover:underline transition-colors">
-              #{{ row.id }}
-            </a>
+        <tr>
+          <td style="font-size:12.5px;color:var(--text2)">{{ row.date }}</td>
+          <td>
+            <a href="{% url 'transaction_detail' row.id %}" style="font-size:12px;font-family:'Courier New',monospace;color:var(--accent);text-decoration:none" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">#{{ row.id }}</a>
           </td>
-          <td class="px-4 py-3 text-right">
+          <td class="r">
             {% if row.credit > 0 %}
-            <span class="text-sm font-semibold text-green-400">{{ row.credit|floatformat:2 }}</span>
-            {% else %}
-            <span class="text-slate-600 text-xs">—</span>
-            {% endif %}
+            <span style="font-weight:600;color:var(--cr)">{{ row.credit|floatformat:2 }}</span>
+            {% else %}<span style="color:var(--text3);font-size:12px">—</span>{% endif %}
           </td>
-          <td class="px-4 py-3 text-right">
+          <td class="r">
             {% if row.debit > 0 %}
-            <span class="text-sm font-semibold text-red-400">{{ row.debit|floatformat:2 }}</span>
-            {% else %}
-            <span class="text-slate-600 text-xs">—</span>
-            {% endif %}
+            <span style="font-weight:600;color:var(--dr)">{{ row.debit|floatformat:2 }}</span>
+            {% else %}<span style="color:var(--text3);font-size:12px">—</span>{% endif %}
           </td>
-          <td class="px-4 py-3 text-right">
-            <span class="text-sm font-bold {% if row.balance >= 0 %}text-white{% else %}text-red-400{% endif %}">
+          <td class="r">
+            <span style="font-weight:700;color:{% if row.balance >= 0 %}var(--text){% else %}var(--dr){% endif %}">
               {{ row.balance|floatformat:2 }}
             </span>
           </td>
-          <td class="px-4 py-3">
-            <span class="text-sm text-slate-300">{{ row.party }}</span>
-          </td>
-          <td class="px-4 py-3">
-            <span class="text-xs px-2 py-0.5 rounded-full font-medium
-              {% if row.debit > 0 %}text-red-400 bg-red-400/10{% else %}text-green-400 bg-green-400/10{% endif %}">
+          <td style="font-size:13px;color:var(--text2)">{{ row.party }}</td>
+          <td>
+            <span class="badge {% if row.debit > 0 %}badge-red{% else %}badge-green{% endif %}" style="font-size:11px">
               {{ row.remarks }}
             </span>
           </td>
         </tr>
         {% empty %}
-        <tr>
-          <td colspan="7" class="px-5 py-12 text-center">
-            <div class="flex flex-col items-center gap-3">
-              <i data-lucide="inbox" class="w-8 h-8 text-slate-600"></i>
-              <p class="text-slate-500 text-sm">No transactions found in this date range.</p>
-            </div>
-          </td>
-        </tr>
+        <tr><td colspan="7">
+          <div class="empty-state" style="padding:36px 16px">
+            <div class="empty-icon"><i data-lucide="inbox" style="width:20px;height:20px"></i></div>
+            <p style="font-size:13px;color:var(--text2)">No transactions in this date range.</p>
+          </div>
+        </td></tr>
         {% endfor %}
       </tbody>
-
-      <!-- Totals Footer -->
-      <tfoot class="border-t-2 border-slate-600/60">
-        <tr class="bg-slate-800/60">
-          <td class="px-4 py-3.5" colspan="2">
-            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Period Total</span>
+      <tfoot>
+        <tr>
+          <td colspan="2" style="padding:11px 16px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2)">Period Total</span></td>
+          <td class="r" style="padding:11px 16px"><span style="font-weight:800;font-size:14px;color:var(--cr)">{{ total_credit|floatformat:2 }}</span></td>
+          <td class="r" style="padding:11px 16px"><span style="font-weight:800;font-size:14px;color:var(--dr)">{{ total_debit|floatformat:2 }}</span></td>
+          <td class="r" style="padding:11px 16px">
+            <span style="font-weight:800;font-size:14px;color:{% if closing_balance >= 0 %}var(--cr){% else %}var(--dr){% endif %}">{{ closing_balance|floatformat:2 }}</span>
           </td>
-          <td class="px-4 py-3.5 text-right">
-            <span class="text-sm font-black text-green-400">{{ total_credit|floatformat:2 }}</span>
-          </td>
-          <td class="px-4 py-3.5 text-right">
-            <span class="text-sm font-black text-red-400">{{ total_debit|floatformat:2 }}</span>
-          </td>
-          <td class="px-4 py-3.5 text-right">
-            <span class="text-sm font-black {% if closing_balance >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
-              {{ closing_balance|floatformat:2 }}
-            </span>
-          </td>
-          <td colspan="2" class="px-4 py-3.5">
-            <span class="text-xs text-slate-500">Closing Balance</span>
-          </td>
+          <td colspan="2" style="padding:11px 16px;font-size:12px;color:var(--text3)">Closing Balance</td>
         </tr>
       </tfoot>
     </table>
@@ -277,37 +232,20 @@
 </div>
 
 {% elif not searched %}
-<!-- Empty state - no search yet -->
-<div class="glass rounded-2xl border border-slate-700/50 py-20 text-center animate-fade-in">
-  <div class="flex flex-col items-center gap-4">
-    <div class="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center animate-float">
-      <i data-lucide="book-open" class="w-8 h-8 text-slate-600"></i>
+<!-- Empty prompt -->
+<div class="card animate-fade-in" style="padding:60px 24px;text-align:center">
+  <div class="empty-state" style="padding:0">
+    <div class="empty-icon animate-float">
+      <i data-lucide="book-open" style="width:24px;height:24px"></i>
     </div>
-    <div>
-      <h3 class="text-white font-semibold text-lg">Search for a Party Ledger</h3>
-      <p class="text-slate-500 text-sm mt-1">Enter a client code and date range above, then click Search.</p>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 text-left max-w-lg w-full">
-      <div class="bg-slate-800/50 rounded-xl p-3">
-        <div class="flex items-center gap-2 mb-1">
-          <i data-lucide="hash" class="w-3.5 h-3.5 text-blue-400"></i>
-          <span class="text-xs font-semibold text-slate-300">Client Code</span>
-        </div>
-        <p class="text-xs text-slate-500">e.g. C001, GC, ADMIN</p>
+    <p style="font-size:15px;font-weight:700;color:var(--text2)">Search for a Party Ledger</p>
+    <p style="font-size:13px;color:var(--text3)">Enter a client code and date range above, then click Search.</p>
+    <div style="display:flex;gap:10px;margin-top:8px;justify-content:center;flex-wrap:wrap">
+      <div class="info-row" style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text2)">
+        <i data-lucide="hash" style="width:13px;height:13px;color:var(--accent)"></i> Client code (e.g. C001)
       </div>
-      <div class="bg-slate-800/50 rounded-xl p-3">
-        <div class="flex items-center gap-2 mb-1">
-          <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-400"></i>
-          <span class="text-xs font-semibold text-slate-300">Start Date</span>
-        </div>
-        <p class="text-xs text-slate-500">Beginning of period</p>
-      </div>
-      <div class="bg-slate-800/50 rounded-xl p-3">
-        <div class="flex items-center gap-2 mb-1">
-          <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-blue-400"></i>
-          <span class="text-xs font-semibold text-slate-300">End Date</span>
-        </div>
-        <p class="text-xs text-slate-500">End of period</p>
+      <div class="info-row" style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text2)">
+        <i data-lucide="calendar" style="width:13px;height:13px;color:var(--accent)"></i> Date range
       </div>
     </div>
   </div>
@@ -315,15 +253,6 @@
 {% endif %}
 
 <style>
-@media print {
-  aside, header, form, .btn-primary, button, a[href] { display: none !important; }
-  body { background: white !important; color: black !important; }
-  .glass { background: white !important; border: 1px solid #ccc !important; backdrop-filter: none !important; }
-  .animated-bg { background: white !important; animation: none !important; }
-  table { font-size: 11px; border-collapse: collapse; width: 100%; }
-  th, td { border: 1px solid #ddd !important; padding: 4px 8px !important; }
-  .text-green-400 { color: #16a34a !important; }
-  .text-red-400 { color: #dc2626 !important; }
-}
+  @media(max-width:700px){ .pl-sum{ grid-template-columns:1fr 1fr!important } }
 </style>
 {% endblock %}

@@ -4,72 +4,64 @@
 {% block page_subtitle %}{% if action == 'Create' %}Add a new admin or staff account{% else %}Update user information{% endif %}{% endblock %}
 
 {% block content %}
-<div class="max-w-xl mx-auto animate-slide-up">
-  <div class="glass rounded-2xl border border-slate-700/50 overflow-hidden">
-
-    <!-- Header -->
-    <div class="px-6 py-5 border-b border-slate-700/50 bg-gradient-to-r from-purple-500/10 to-blue-500/10">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-          <i data-lucide="{% if action == 'Create' %}user-plus{% else %}user-cog{% endif %}" class="w-5 h-5 text-purple-400"></i>
+<div style="max-width:560px;margin:0 auto" class="animate-slide-up">
+  <div class="card" style="overflow:hidden">
+    <div class="card-header" style="background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(99,102,241,.05))">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:11px;background:rgba(139,92,246,.12);display:flex;align-items:center;justify-content:center">
+          <i data-lucide="{% if action == 'Create' %}user-plus{% else %}user-cog{% endif %}" style="width:18px;height:18px;color:#8b5cf6"></i>
         </div>
         <div>
-          <h3 class="text-white font-semibold">{{ action }} User</h3>
-          <p class="text-slate-400 text-xs">Only ADMIN role users can manage accounts</p>
+          <p style="font-size:15px;font-weight:700;color:var(--text)">{{ action }} User</p>
+          <p style="font-size:12px;color:var(--text3);margin-top:2px">Only ADMIN role can manage user accounts</p>
         </div>
       </div>
     </div>
 
-    <!-- Form -->
-    <form method="post" class="p-6 space-y-5" x-data="{ showPass: false, showConfirm: false }">
+    <form method="post" class="card-body" x-data="{showPass:false,showCfm:false}">
       {% csrf_token %}
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
 
         <!-- Full Name -->
-        <div class="sm:col-span-2">
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Full Name <span class="text-red-400">*</span></label>
-          <div class="relative">
-            <i data-lucide="user" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+        <div style="grid-column:1/-1">
+          <label class="form-label">Full Name <span style="color:var(--red)">*</span></label>
+          <div class="input-wrap">
+            <i data-lucide="user" class="input-icon"></i>
             <input type="text" name="name" required
                    value="{% if edit_user %}{{ edit_user.name }}{% elif data %}{{ data.name }}{% endif %}"
-                   placeholder="e.g. John Smith"
-                   class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all" />
+                   placeholder="e.g. John Smith" class="form-input" />
           </div>
         </div>
 
-        <!-- Code (only on create) -->
+        <!-- Code (create only) -->
         {% if action == 'Create' %}
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">User Code <span class="text-red-400">*</span></label>
-          <div class="relative">
-            <i data-lucide="hash" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+          <label class="form-label">User Code <span style="color:var(--red)">*</span></label>
+          <div class="input-wrap">
+            <i data-lucide="hash" class="input-icon"></i>
             <input type="text" name="code" required
                    value="{% if data %}{{ data.code }}{% endif %}"
-                   placeholder="e.g. STAFF001"
-                   class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all uppercase font-mono" />
+                   placeholder="e.g. STAFF001" class="form-input font-mono" style="text-transform:uppercase" />
           </div>
-          <p class="text-xs text-slate-500 mt-1">Used for login. Cannot be changed later.</p>
+          <p style="font-size:11.5px;color:var(--text3);margin-top:5px">Used to log in. Cannot be changed later.</p>
         </div>
         {% else %}
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">User Code</label>
-          <div class="relative">
-            <i data-lucide="hash" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 pointer-events-none"></i>
-            <input type="text" value="{{ edit_user.code }}" disabled
-                   class="w-full bg-slate-900/50 border border-slate-700/50 text-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm font-mono cursor-not-allowed" />
+          <label class="form-label">User Code</label>
+          <div class="input-wrap">
+            <i data-lucide="hash" class="input-icon"></i>
+            <input type="text" value="{{ edit_user.code }}" disabled class="form-input font-mono" style="opacity:.5;cursor:not-allowed" />
           </div>
-          <p class="text-xs text-slate-600 mt-1">Code cannot be changed.</p>
+          <p style="font-size:11.5px;color:var(--text3);margin-top:5px">Code cannot be changed.</p>
         </div>
         {% endif %}
 
         <!-- Role -->
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Role <span class="text-red-400">*</span></label>
-          <div class="relative">
-            <i data-lucide="shield" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
-            <select name="role"
-                    class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all appearance-none cursor-pointer">
+          <label class="form-label">Role <span style="color:var(--red)">*</span></label>
+          <div class="input-wrap">
+            <i data-lucide="shield" class="input-icon"></i>
+            <select name="role" class="form-input" style="cursor:pointer">
               <option value="ADMIN" {% if edit_user.role == 'ADMIN' or data.role == 'ADMIN' %}selected{% endif %}>Admin</option>
               <option value="STAFF" {% if edit_user.role == 'STAFF' or not edit_user and not data %}selected{% elif data.role == 'STAFF' %}selected{% endif %}>Staff</option>
             </select>
@@ -77,70 +69,63 @@
         </div>
 
         <!-- Email -->
-        <div class="sm:col-span-2">
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
-          <div class="relative">
-            <i data-lucide="mail" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+        <div style="grid-column:1/-1">
+          <label class="form-label">Email</label>
+          <div class="input-wrap">
+            <i data-lucide="mail" class="input-icon"></i>
             <input type="email" name="email"
                    value="{% if edit_user %}{{ edit_user.email|default:'' }}{% elif data %}{{ data.email }}{% endif %}"
-                   placeholder="user@example.com"
-                   class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all" />
+                   placeholder="user@example.com" class="form-input" />
           </div>
         </div>
 
         <!-- Password -->
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">
-            Password {% if action == 'Create' %}<span class="text-red-400">*</span>{% else %}<span class="text-slate-500 font-normal">(leave blank to keep)</span>{% endif %}
+          <label class="form-label">
+            Password {% if action == 'Create' %}<span style="color:var(--red)">*</span>{% else %}<span style="color:var(--text3);font-weight:400">(leave blank to keep)</span>{% endif %}
           </label>
-          <div class="relative">
-            <i data-lucide="lock" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
-            <input :type="showPass ? 'text' : 'password'" name="password"
+          <div class="input-wrap">
+            <i data-lucide="lock" class="input-icon"></i>
+            <input :type="showPass?'text':'password'" name="password"
                    {% if action == 'Create' %}required{% endif %}
-                   placeholder="Min 8 characters"
-                   class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-10 py-2.5 text-sm transition-all" />
-            <button type="button" @click="showPass = !showPass"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors">
-              <i :data-lucide="showPass ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
+                   placeholder="Min 8 characters" class="form-input" style="padding-right:40px" />
+            <button type="button" @click="showPass=!showPass"
+                    style="position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex">
+              <i :data-lucide="showPass?'eye-off':'eye'" style="width:15px;height:15px"></i>
             </button>
           </div>
         </div>
 
         <!-- Confirm Password -->
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Confirm Password {% if action == 'Create' %}<span class="text-red-400">*</span>{% endif %}</label>
-          <div class="relative">
-            <i data-lucide="lock-keyhole" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
-            <input :type="showConfirm ? 'text' : 'password'" name="confirm_password"
+          <label class="form-label">Confirm Password {% if action == 'Create' %}<span style="color:var(--red)">*</span>{% endif %}</label>
+          <div class="input-wrap">
+            <i data-lucide="lock-keyhole" class="input-icon"></i>
+            <input :type="showCfm?'text':'password'" name="confirm_password"
                    {% if action == 'Create' %}required{% endif %}
-                   placeholder="Repeat password"
-                   class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-10 py-2.5 text-sm transition-all" />
-            <button type="button" @click="showConfirm = !showConfirm"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors">
-              <i :data-lucide="showConfirm ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
+                   placeholder="Repeat password" class="form-input" style="padding-right:40px" />
+            <button type="button" @click="showCfm=!showCfm"
+                    style="position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex">
+              <i :data-lucide="showCfm?'eye-off':'eye'" style="width:15px;height:15px"></i>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Role info box -->
-      <div class="bg-slate-800/40 rounded-xl p-3 flex items-start gap-2">
-        <i data-lucide="info" class="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5"></i>
-        <div class="text-xs text-slate-400 space-y-1">
-          <p><strong class="text-purple-400">Admin</strong> — full access including user management, all reports, and all client/transaction operations.</p>
-          <p><strong class="text-blue-400">Staff</strong> — access to clients, transactions, and reports. Cannot manage users.</p>
+      <!-- Role info -->
+      <div class="alert alert-blue" style="margin:18px 0">
+        <i data-lucide="info" style="width:14px;height:14px;flex-shrink:0;margin-top:1px"></i>
+        <div style="font-size:12.5px;line-height:1.6">
+          <p><strong style="color:#8b5cf6">Admin</strong> — full access including user management, all reports, and all operations.</p>
+          <p style="margin-top:3px"><strong style="color:var(--accent)">Staff</strong> — access to clients, transactions, and reports. Cannot manage users.</p>
         </div>
       </div>
 
-      <!-- Actions -->
-      <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-700/50">
-        <a href="{% url 'user_list' %}"
-           class="px-5 py-2.5 rounded-xl border border-slate-600/50 text-slate-300 hover:text-white hover:border-slate-500 text-sm font-medium transition-all">
-          Cancel
-        </a>
-        <button type="submit"
-                class="btn-primary text-white text-sm font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2">
-          <i data-lucide="{% if action == 'Create' %}user-plus{% else %}save{% endif %}" class="w-4 h-4"></i>
+      <hr class="divider" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px">
+        <a href="{% url 'user_list' %}" class="btn btn-ghost">Cancel</a>
+        <button type="submit" class="btn btn-primary">
+          <i data-lucide="{% if action == 'Create' %}user-plus{% else %}save{% endif %}" style="width:14px;height:14px"></i>
           {{ action }} User
         </button>
       </div>

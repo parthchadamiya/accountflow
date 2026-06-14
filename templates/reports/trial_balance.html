@@ -1,190 +1,158 @@
 {% extends 'base.html' %}
 {% block title %}Trial Balance — AccountFlow{% endblock %}
 {% block page_title %}Trial Balance{% endblock %}
-{% block page_subtitle %}Credit (positive balance) on the right · Debit (negative balance) on the left{% endblock %}
+{% block page_subtitle %}DR (negative balance) on left · CR (positive balance) on right{% endblock %}
 
 {% block content %}
-<!-- Summary Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 animate-slide-up">
-
-  <!-- CR Total -->
-  <div class="stat-card glass rounded-2xl p-5 border border-green-500/25">
-    <div class="flex items-center gap-3 mb-3">
-      <div class="w-9 h-9 rounded-xl bg-green-500/20 flex items-center justify-center">
-        <i data-lucide="arrow-down-circle" class="w-5 h-5 text-green-400"></i>
+<!-- Summary cards -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px" class="animate-slide-up tb-cards">
+  <div class="stat-card" style="border-color:rgba(16,185,129,.25)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(16,185,129,.1);display:flex;align-items:center;justify-content:center">
+        <i data-lucide="arrow-down-circle" style="width:17px;height:17px;color:var(--green)"></i>
       </div>
       <div>
-        <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Credit Side (CR)</p>
-        <p class="text-xs text-slate-400">{{ cr_count }} client{{ cr_count|pluralize }} · positive balance</p>
+        <p style="font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:700">CR Side</p>
+        <p style="font-size:11.5px;color:var(--text2)">{{ cr_count }} client{{ cr_count|pluralize }} · positive</p>
       </div>
     </div>
-    <p class="text-2xl font-black text-green-400">{{ total_cr|floatformat:2 }}</p>
+    <p style="font-size:22px;font-weight:800;color:var(--cr)">{{ total_cr|floatformat:2 }}</p>
   </div>
 
-  <!-- DR Total -->
-  <div class="stat-card glass rounded-2xl p-5 border border-red-500/25">
-    <div class="flex items-center gap-3 mb-3">
-      <div class="w-9 h-9 rounded-xl bg-red-500/20 flex items-center justify-center">
-        <i data-lucide="arrow-up-circle" class="w-5 h-5 text-red-400"></i>
+  <div class="stat-card" style="border-color:rgba(239,68,68,.25)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(239,68,68,.1);display:flex;align-items:center;justify-content:center">
+        <i data-lucide="arrow-up-circle" style="width:17px;height:17px;color:var(--red)"></i>
       </div>
       <div>
-        <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Debit Side (DR)</p>
-        <p class="text-xs text-slate-400">{{ dr_count }} client{{ dr_count|pluralize }} · negative balance</p>
+        <p style="font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:700">DR Side</p>
+        <p style="font-size:11.5px;color:var(--text2)">{{ dr_count }} client{{ dr_count|pluralize }} · negative</p>
       </div>
     </div>
-    <p class="text-2xl font-black text-red-400">{{ total_dr|floatformat:2 }}</p>
+    <p style="font-size:22px;font-weight:800;color:var(--dr)">{{ total_dr|floatformat:2 }}</p>
   </div>
 
-  <!-- Difference -->
-  <div class="stat-card glass rounded-2xl p-5 border border-slate-600/30">
-    <div class="flex items-center gap-3 mb-3">
-      <div class="w-9 h-9 rounded-xl bg-purple-500/20 flex items-center justify-center">
-        <i data-lucide="scale" class="w-5 h-5 text-purple-400"></i>
+  <div class="stat-card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(139,92,246,.1);display:flex;align-items:center;justify-content:center">
+        <i data-lucide="scale" style="width:17px;height:17px;color:#8b5cf6"></i>
       </div>
       <div>
-        <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Net (CR − DR)</p>
-        <p class="text-xs text-slate-400">Difference</p>
+        <p style="font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:700">Net (CR − DR)</p>
+        <p style="font-size:11.5px;color:var(--text2)">Difference</p>
       </div>
     </div>
-    <p class="text-2xl font-black {% if difference >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
+    <p style="font-size:22px;font-weight:800;color:{% if difference >= 0 %}var(--cr){% else %}var(--dr){% endif %}">
       {% if difference > 0 %}+{% endif %}{{ difference|floatformat:2 }}
     </p>
   </div>
 </div>
 
 {% if dr_count == 0 %}
-<!-- Info banner when no DR entries -->
-<div class="glass rounded-2xl border border-amber-500/20 bg-amber-500/5 px-5 py-3.5 flex items-start gap-3 mb-5 animate-fade-in">
-  <i data-lucide="info" class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5"></i>
-  <p class="text-sm text-amber-300">
-    No clients have a negative balance right now — the <strong>DR (Debit) side is empty</strong>.
-    To see DR entries, create a transaction where a client sends more than their current balance
-    (overdraft is allowed — the balance will go negative and that client will appear here).
-  </p>
+<div class="alert alert-amber animate-fade-in" style="margin-bottom:16px">
+  <i data-lucide="info" style="width:14px;height:14px;flex-shrink:0;margin-top:1px"></i>
+  <p style="font-size:13px">No clients have a negative balance — <strong>DR side is empty</strong>. Overdraft is allowed: create a transfer larger than a client's balance to push them to the DR side.</p>
 </div>
 {% endif %}
 
 <!-- Trial Balance Table -->
-<div class="glass rounded-2xl border border-slate-700/50 overflow-hidden animate-fade-in">
-  <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700/50">
-    <div class="flex items-center gap-2">
-      <i data-lucide="table-2" class="w-4 h-4 text-blue-400"></i>
-      <h3 class="text-white font-semibold">Trial Balance Statement</h3>
+<div class="card animate-fade-in" style="overflow:hidden">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:8px">
+      <i data-lucide="table-2" style="width:15px;height:15px;color:var(--accent)"></i>
+      <p style="font-size:14px;font-weight:700;color:var(--text)">Trial Balance Statement</p>
     </div>
-    <button onclick="window.print()"
-            class="flex items-center gap-2 text-xs text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-all">
-      <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
+    <button onclick="window.print()" class="btn btn-ghost btn-sm no-print">
+      <i data-lucide="printer" style="width:13px;height:13px"></i> Print
     </button>
   </div>
 
-  <div class="overflow-x-auto">
-    <table class="w-full text-sm">
-
-      <!-- Two-section header -->
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:13.5px">
+      <!-- Section headers -->
       <thead>
         <tr>
-          <th colspan="3"
-              class="py-2.5 px-4 text-center text-xs font-bold uppercase tracking-widest text-red-400 bg-red-500/8 border-b border-r border-red-500/20">
-            ← DR Side &nbsp;(Negative Balance / Debit)
+          <th colspan="3" style="padding:10px 16px;text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dr);background:rgba(239,68,68,.05);border-bottom:1px solid rgba(239,68,68,.15);border-right:2px solid var(--border)">
+            ← DR Side (Negative Balance / Debit)
           </th>
-          <th colspan="3"
-              class="py-2.5 px-4 text-center text-xs font-bold uppercase tracking-widest text-green-400 bg-green-500/8 border-b border-green-500/20">
-            CR Side &nbsp;(Positive Balance / Credit) →
+          <th colspan="3" style="padding:10px 16px;text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--cr);background:rgba(16,185,129,.05);border-bottom:1px solid rgba(16,185,129,.15)">
+            CR Side (Positive Balance / Credit) →
           </th>
         </tr>
-        <tr class="border-b border-slate-700/50 bg-slate-800/40">
-          <th class="text-left   px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider w-[12%]">DR Code</th>
-          <th class="text-left   px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider w-[25%]">DR Name</th>
-          <th class="text-right  px-4 py-3 text-xs font-semibold text-red-400   uppercase tracking-wider w-[13%] border-r border-slate-700/60">DR Balance</th>
-          <th class="text-left   px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider w-[12%]">CR Code</th>
-          <th class="text-left   px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider w-[25%]">CR Name</th>
-          <th class="text-right  px-4 py-3 text-xs font-semibold text-green-400 uppercase tracking-wider w-[13%]">CR Balance</th>
+        <tr style="background:var(--card2);border-bottom:1px solid var(--border)">
+          <th style="text-align:left;padding:9px 16px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);width:12%">DR Code</th>
+          <th style="text-align:left;padding:9px 16px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);width:25%">DR Name</th>
+          <th style="text-align:right;padding:9px 16px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dr);width:13%;border-right:2px solid var(--border)">DR Balance</th>
+          <th style="text-align:left;padding:9px 16px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);width:12%">CR Code</th>
+          <th style="text-align:left;padding:9px 16px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);width:25%">CR Name</th>
+          <th style="text-align:right;padding:9px 16px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--cr);width:13%">CR Balance</th>
         </tr>
       </thead>
 
-      <tbody class="divide-y divide-slate-700/20">
+      <tbody>
         {% for dr, cr in paired_rows %}
-        <tr class="hover:bg-slate-800/25 transition-colors">
-
-          <!-- DR side (left) -->
+        <tr style="border-bottom:1px solid var(--border);transition:background .1s" onmouseover="this.style.background='var(--nav-bg)'" onmouseout="this.style.background=''">
           {% if dr %}
-          <td class="px-4 py-3">
-            <span class="text-xs font-mono bg-red-500/10 text-red-400 px-2 py-0.5 rounded">{{ dr.code }}</span>
+          <td style="padding:11px 16px">
+            <span class="code-chip" style="color:var(--dr);background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.15)">{{ dr.code }}</span>
           </td>
-          <td class="px-4 py-3 text-slate-200 font-medium">{{ dr.name }}</td>
-          <td class="px-4 py-3 text-right font-bold text-red-400 border-r border-slate-700/60">
-            {{ dr.balance|floatformat:2 }}
-          </td>
+          <td style="padding:11px 16px;color:var(--text);font-weight:500">{{ dr.name }}</td>
+          <td style="padding:11px 16px;text-align:right;font-weight:700;color:var(--dr);border-right:2px solid var(--border)">{{ dr.balance|floatformat:2 }}</td>
           {% else %}
-          <td class="px-4 py-3 border-r-0 bg-red-950/5"></td>
-          <td class="px-4 py-3 bg-red-950/5">
-            {% if forloop.first and dr_count == 0 %}
-            <span class="text-xs text-slate-600 italic">— no negative balances —</span>
-            {% endif %}
-          </td>
-          <td class="px-4 py-3 border-r border-slate-700/60 bg-red-950/5"></td>
+          <td style="padding:11px 16px;background:rgba(239,68,68,.02)">{% if forloop.first and dr_count == 0 %}<span style="font-size:12px;color:var(--text3);font-style:italic">— none —</span>{% endif %}</td>
+          <td style="padding:11px 16px;background:rgba(239,68,68,.02)"></td>
+          <td style="padding:11px 16px;border-right:2px solid var(--border);background:rgba(239,68,68,.02)"></td>
           {% endif %}
 
-          <!-- CR side (right) -->
           {% if cr %}
-          <td class="px-4 py-3">
-            <span class="text-xs font-mono bg-green-500/10 text-green-400 px-2 py-0.5 rounded">{{ cr.code }}</span>
+          <td style="padding:11px 16px">
+            <span class="code-chip" style="color:var(--cr);background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.15)">{{ cr.code }}</span>
           </td>
-          <td class="px-4 py-3 text-slate-200 font-medium">{{ cr.name }}</td>
-          <td class="px-4 py-3 text-right font-bold text-green-400">
-            {{ cr.balance|floatformat:2 }}
-          </td>
+          <td style="padding:11px 16px;color:var(--text);font-weight:500">{{ cr.name }}</td>
+          <td style="padding:11px 16px;text-align:right;font-weight:700;color:var(--cr)">{{ cr.balance|floatformat:2 }}</td>
           {% else %}
-          <td class="px-4 py-3 bg-green-950/5"></td>
-          <td class="px-4 py-3 bg-green-950/5"></td>
-          <td class="px-4 py-3 bg-green-950/5"></td>
+          <td style="background:rgba(16,185,129,.02)"></td>
+          <td style="background:rgba(16,185,129,.02)"></td>
+          <td style="background:rgba(16,185,129,.02)"></td>
           {% endif %}
-
         </tr>
         {% empty %}
-        <tr>
-          <td colspan="6" class="px-5 py-16 text-center">
-            <div class="flex flex-col items-center gap-3">
-              <i data-lucide="table-2" class="w-8 h-8 text-slate-600"></i>
-              <p class="text-slate-500">No clients yet. Add clients to see the trial balance.</p>
-            </div>
-          </td>
-        </tr>
+        <tr><td colspan="6">
+          <div class="empty-state">
+            <div class="empty-icon"><i data-lucide="table-2" style="width:22px;height:22px"></i></div>
+            <p style="font-size:13.5px;color:var(--text2)">No clients yet. Add clients to see the trial balance.</p>
+          </div>
+        </td></tr>
         {% endfor %}
       </tbody>
 
-      <!-- Totals -->
       <tfoot>
-        <tr class="border-t-2 border-slate-600/50 bg-slate-800/50">
-          <td colspan="2" class="px-4 py-3.5">
-            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Total DR</span>
+        <tr style="background:var(--card2);border-top:2px solid var(--border)">
+          <td colspan="2" style="padding:11px 16px">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2)">Total DR</span>
           </td>
-          <td class="px-4 py-3.5 text-right font-black text-red-400 text-base border-r border-slate-600/60">
-            {% if total_dr %}{{ total_dr|floatformat:2 }}{% else %}<span class="text-slate-600">0.00</span>{% endif %}
+          <td style="padding:11px 16px;text-align:right;font-weight:800;font-size:15px;color:var(--dr);border-right:2px solid var(--border)">
+            {% if total_dr %}{{ total_dr|floatformat:2 }}{% else %}<span style="color:var(--text3)">0.00</span>{% endif %}
           </td>
-          <td colspan="2" class="px-4 py-3.5">
-            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Total CR</span>
+          <td colspan="2" style="padding:11px 16px">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2)">Total CR</span>
           </td>
-          <td class="px-4 py-3.5 text-right font-black text-green-400 text-base">
-            {% if total_cr %}{{ total_cr|floatformat:2 }}{% else %}<span class="text-slate-600">0.00</span>{% endif %}
+          <td style="padding:11px 16px;text-align:right;font-weight:800;font-size:15px;color:var(--cr)">
+            {% if total_cr %}{{ total_cr|floatformat:2 }}{% else %}<span style="color:var(--text3)">0.00</span>{% endif %}
           </td>
         </tr>
-        <tr class="border-t border-slate-700/30 bg-slate-900/20">
-          <td colspan="3" class="px-4 py-3 text-right border-r border-slate-700/50 pr-4">
+        <tr style="background:var(--surface);border-top:1px solid var(--border)">
+          <td colspan="3" style="padding:9px 16px;text-align:right;border-right:2px solid var(--border)">
             {% if difference < 0 %}
-            <span class="text-xs text-red-400 font-semibold">
-              DR surplus: {{ difference|floatformat:2 }}
-            </span>
+            <span style="font-size:12px;font-weight:600;color:var(--dr)">DR surplus: {{ difference|floatformat:2 }}</span>
             {% endif %}
           </td>
-          <td colspan="3" class="px-4 py-3">
+          <td colspan="3" style="padding:9px 16px">
             {% if difference > 0 %}
-            <span class="text-xs text-green-400 font-semibold">
-              CR surplus: +{{ difference|floatformat:2 }}
-            </span>
+            <span style="font-size:12px;font-weight:600;color:var(--cr)">CR surplus: +{{ difference|floatformat:2 }}</span>
             {% elif difference == 0 and paired_rows %}
-            <span class="text-xs text-slate-400 font-semibold flex items-center gap-1">
-              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-green-400"></i> Balanced
+            <span style="font-size:12px;font-weight:600;color:var(--green);display:inline-flex;align-items:center;gap:5px">
+              <i data-lucide="check-circle-2" style="width:13px;height:13px"></i> Balanced
             </span>
             {% endif %}
           </td>
@@ -194,26 +162,18 @@
   </div>
 </div>
 
-<!-- How it works note -->
-<div class="mt-4 glass rounded-xl border border-slate-700/30 px-5 py-3.5 flex items-start gap-3 animate-fade-in">
-  <i data-lucide="lightbulb" class="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5"></i>
-  <p class="text-xs text-slate-400">
-    <strong class="text-slate-300">How balances are assigned:</strong>
-    A client's <em>current balance</em> = opening balance + total received − total sent.
-    If the result is <strong class="text-green-400">positive</strong> → shown on the <strong class="text-green-400">CR (right)</strong> side.
-    If <strong class="text-red-400">negative</strong> (sent more than received) → shown on the <strong class="text-red-400">DR (left)</strong> side.
-    Overdraft is allowed — creating a transaction larger than the sender's balance will push them to the DR side.
+<!-- Note -->
+<div class="card" style="padding:14px 18px;margin-top:14px;display:flex;align-items:flex-start;gap:10px" class="animate-fade-in">
+  <i data-lucide="lightbulb" style="width:15px;height:15px;color:var(--amber);flex-shrink:0;margin-top:1px"></i>
+  <p style="font-size:12.5px;color:var(--text2);line-height:1.6">
+    <strong style="color:var(--text)">Balance assignment:</strong>
+    Current balance = opening balance + total received − total sent.
+    <strong style="color:var(--cr)">Positive</strong> → CR (right) side.
+    <strong style="color:var(--dr)">Negative</strong> (overdraft) → DR (left) side.
   </p>
 </div>
 
 <style>
-@media print {
-  aside, header, .btn-primary, button, .glass:first-child, .mt-4 { display: none !important; }
-  body { background: white !important; color: black !important; }
-  .glass { background: white !important; border: 1px solid #ccc !important; backdrop-filter: none !important; }
-  .animated-bg { background: white !important; animation: none !important; }
-  table { font-size: 11px; border-collapse: collapse; width: 100%; }
-  th, td { border: 1px solid #ccc !important; padding: 5px 8px !important; color: black !important; }
-}
+  @media(max-width:700px){ .tb-cards{ grid-template-columns:1fr!important } }
 </style>
 {% endblock %}

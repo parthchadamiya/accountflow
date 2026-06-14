@@ -1,101 +1,97 @@
 {% extends 'base.html' %}
 {% block title %}{{ client.client_name }} — AccountFlow{% endblock %}
-{% block page_title %}Client Details{% endblock %}
+{% block page_title %}Client Detail{% endblock %}
 {% block page_subtitle %}{{ client.client_name }}{% endblock %}
 
 {% block content %}
-<div class="space-y-5 animate-fade-in">
-  <!-- Back + Actions -->
-  <div class="flex items-center justify-between">
-    <a href="{% url 'client_list' %}" class="flex items-center gap-2 text-slate-400 hover:text-white text-sm transition-colors">
-      <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Clients
+<div class="animate-fade-in">
+  <!-- Actions bar -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <a href="{% url 'client_list' %}" class="btn btn-ghost btn-sm">
+      <i data-lucide="arrow-left" style="width:13px;height:13px"></i> Clients
     </a>
-    <div class="flex items-center gap-2">
-      <a href="{% url 'client_update' client.pk %}" class="px-4 py-2 rounded-xl border border-slate-600/50 text-slate-300 hover:text-white hover:border-slate-500 text-sm font-medium transition-all flex items-center gap-2">
-        <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Edit
+    <div style="display:flex;gap:8px">
+      <a href="{% url 'client_update' client.pk %}" class="btn btn-ghost btn-sm">
+        <i data-lucide="pencil" style="width:13px;height:13px"></i> Edit
       </a>
       <form method="post" action="{% url 'client_delete' client.pk %}"
             x-data="{}" @submit.prevent="if(confirm('Delete this client?')) $el.submit()">
         {% csrf_token %}
-        <button type="submit" class="px-4 py-2 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 text-sm font-medium transition-all flex items-center gap-2">
-          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete
+        <button type="submit" class="btn btn-danger btn-sm">
+          <i data-lucide="trash-2" style="width:13px;height:13px"></i> Delete
         </button>
       </form>
     </div>
   </div>
 
-  <!-- Profile Card -->
-  <div class="glass rounded-2xl border border-slate-700/50 p-6">
-    <div class="flex flex-col sm:flex-row sm:items-center gap-5">
-      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white font-black text-2xl flex-shrink-0 animate-float">
+  <!-- Profile card -->
+  <div class="card" style="padding:22px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:800;flex-shrink:0" class="animate-float">
         {{ client.client_name|slice:":1"|upper }}
       </div>
-      <div class="flex-1">
-        <h2 class="text-2xl font-black text-white">{{ client.client_name }}</h2>
-        <div class="flex flex-wrap items-center gap-3 mt-2">
-          <span class="text-xs font-mono bg-slate-800 text-blue-300 px-2.5 py-1 rounded-lg">{{ client.code }}</span>
+      <div>
+        <h2 style="font-size:20px;font-weight:800;color:var(--text)">{{ client.client_name }}</h2>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+          <span class="code-chip">{{ client.code }}</span>
           {% if client.status == 'ACTIVE' %}
-          <span class="inline-flex items-center gap-1 text-xs text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full">
-            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Active
-          </span>
+          <span class="badge badge-green"><span class="dot dot-green"></span> Active</span>
           {% else %}
-          <span class="inline-flex items-center gap-1 text-xs text-slate-400 bg-slate-700/40 px-2.5 py-1 rounded-full">
-            <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Inactive
-          </span>
+          <span class="badge badge-neutral">Inactive</span>
           {% endif %}
-          <span class="text-xs text-slate-500">Since {{ client.created_at|date:"M d, Y" }}</span>
+          <span style="font-size:12px;color:var(--text3)">Since {{ client.created_at|date:"M d, Y" }}</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Info + Balance Row -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-    <!-- Contact Info -->
-    <div class="lg:col-span-2 glass rounded-2xl border border-slate-700/50 p-5">
-      <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
-        <i data-lucide="contact" class="w-4 h-4 text-blue-400"></i> Contact Information
-      </h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="bg-slate-800/40 rounded-xl p-3">
-          <p class="text-xs text-slate-500 mb-1">Mobile</p>
-          <p class="text-sm text-white font-medium">{{ client.mobile|default:"—" }}</p>
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:16px;margin-bottom:16px" class="responsive-grid">
+    <!-- Contact info -->
+    <div class="card">
+      <div class="card-header" style="display:flex;align-items:center;gap:8px">
+        <i data-lucide="contact" style="width:15px;height:15px;color:var(--accent)"></i>
+        <p style="font-size:14px;font-weight:600;color:var(--text)">Contact Information</p>
+      </div>
+      <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="info-row">
+          <p style="font-size:11px;color:var(--text3);margin-bottom:4px">Mobile</p>
+          <p style="font-size:13.5px;color:var(--text);font-weight:500">{{ client.mobile|default:"—" }}</p>
         </div>
-        <div class="bg-slate-800/40 rounded-xl p-3">
-          <p class="text-xs text-slate-500 mb-1">Email</p>
-          <p class="text-sm text-white font-medium">{{ client.email|default:"—" }}</p>
+        <div class="info-row">
+          <p style="font-size:11px;color:var(--text3);margin-bottom:4px">Email</p>
+          <p style="font-size:13.5px;color:var(--text);font-weight:500">{{ client.email|default:"—" }}</p>
         </div>
-        <div class="bg-slate-800/40 rounded-xl p-3 sm:col-span-2">
-          <p class="text-xs text-slate-500 mb-1">Address</p>
-          <p class="text-sm text-white font-medium">{{ client.address|default:"—" }}</p>
+        <div class="info-row" style="grid-column:1/-1">
+          <p style="font-size:11px;color:var(--text3);margin-bottom:4px">Address</p>
+          <p style="font-size:13.5px;color:var(--text);font-weight:500">{{ client.address|default:"—" }}</p>
         </div>
-        <div class="bg-slate-800/40 rounded-xl p-3">
-          <p class="text-xs text-slate-500 mb-1">Created By</p>
-          <p class="text-sm text-white font-medium">{{ client.created_by.name|default:"—" }}</p>
+        <div class="info-row">
+          <p style="font-size:11px;color:var(--text3);margin-bottom:4px">Created By</p>
+          <p style="font-size:13.5px;color:var(--text);font-weight:500">{{ client.created_by.name|default:"—" }}</p>
         </div>
-        <div class="bg-slate-800/40 rounded-xl p-3">
-          <p class="text-xs text-slate-500 mb-1">Last Updated</p>
-          <p class="text-sm text-white font-medium">{{ client.updated_at|date:"M d, Y H:i" }}</p>
+        <div class="info-row">
+          <p style="font-size:11px;color:var(--text3);margin-bottom:4px">Last Updated</p>
+          <p style="font-size:13.5px;color:var(--text);font-weight:500">{{ client.updated_at|date:"M d, Y" }}</p>
         </div>
       </div>
     </div>
 
     <!-- Balance -->
-    <div class="space-y-4">
-      <div class="glass rounded-2xl border border-slate-700/50 p-5">
-        <p class="text-xs text-slate-500 mb-1">Opening Balance</p>
-        <p class="text-2xl font-black text-white">₹{{ client.opening_balance|floatformat:2 }}</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card" style="padding:18px">
+        <p style="font-size:11.5px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Opening Balance</p>
+        <p style="font-size:24px;font-weight:800;color:var(--text)">₹{{ client.opening_balance|floatformat:2 }}</p>
       </div>
-      <div class="glass rounded-2xl border {% if client.current_balance >= 0 %}border-green-500/30{% else %}border-red-500/30{% endif %} p-5">
-        <p class="text-xs text-slate-500 mb-1">Current Balance</p>
-        <p class="text-2xl font-black {% if client.current_balance >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
+      <div class="card" style="padding:18px;border-color:{% if client.current_balance >= 0 %}rgba(16,185,129,.25){% else %}rgba(239,68,68,.25){% endif %}">
+        <p style="font-size:11.5px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Current Balance</p>
+        <p style="font-size:24px;font-weight:800;color:{% if client.current_balance >= 0 %}var(--cr){% else %}var(--dr){% endif %}">
           ₹{{ client.current_balance|floatformat:2 }}
         </p>
-        <p class="text-xs text-slate-500 mt-1">
+        <p style="font-size:11.5px;color:var(--text3);margin-top:6px">
           {% if client.current_balance >= client.opening_balance %}
-            <span class="text-green-400">▲ Gained</span>
+            <span style="color:var(--green)">▲ Gained</span>
           {% else %}
-            <span class="text-red-400">▼ Lost</span>
+            <span style="color:var(--red)">▼ Lost</span>
           {% endif %}
           from opening
         </p>
@@ -104,48 +100,49 @@
   </div>
 
   <!-- Transactions -->
-  <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
-    <!-- Sent Transactions -->
-    <div class="glass rounded-2xl border border-slate-700/50 overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-700/50 flex items-center gap-2">
-        <i data-lucide="arrow-up-right" class="w-4 h-4 text-red-400"></i>
-        <h3 class="text-white font-semibold text-sm">Sent (Debited)</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="responsive-grid">
+    <!-- Sent -->
+    <div class="card" style="overflow:hidden">
+      <div class="card-header" style="display:flex;align-items:center;gap:8px">
+        <i data-lucide="arrow-up-right" style="width:14px;height:14px;color:var(--red)"></i>
+        <p style="font-size:13.5px;font-weight:600;color:var(--text)">Sent (Debited)</p>
       </div>
-      <div class="divide-y divide-slate-700/30">
+      <div>
         {% for tx in sent %}
-        <div class="px-5 py-3.5 flex items-center justify-between">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)">
           <div>
-            <p class="text-sm font-medium text-white">{{ tx.receiver_client.client_name }}</p>
-            <p class="text-xs text-slate-500">{{ tx.transaction_date }} • {{ tx.description|default:"—" }}</p>
+            <p style="font-size:13px;font-weight:500;color:var(--text)">{{ tx.receiver_client.client_name }}</p>
+            <p style="font-size:11px;color:var(--text3);margin-top:2px">{{ tx.transaction_date }} · {{ tx.description|default:"—" }}</p>
           </div>
-          <span class="text-sm font-bold text-red-400">-₹{{ tx.amount|floatformat:2 }}</span>
+          <span style="font-size:13px;font-weight:700;color:var(--dr)">-₹{{ tx.amount|floatformat:2 }}</span>
         </div>
         {% empty %}
-        <div class="px-5 py-8 text-center text-slate-600 text-sm">No sent transactions</div>
+        <div style="padding:32px 16px;text-align:center;color:var(--text3);font-size:13px">No sent transactions</div>
         {% endfor %}
       </div>
     </div>
 
-    <!-- Received Transactions -->
-    <div class="glass rounded-2xl border border-slate-700/50 overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-700/50 flex items-center gap-2">
-        <i data-lucide="arrow-down-left" class="w-4 h-4 text-green-400"></i>
-        <h3 class="text-white font-semibold text-sm">Received (Credited)</h3>
+    <!-- Received -->
+    <div class="card" style="overflow:hidden">
+      <div class="card-header" style="display:flex;align-items:center;gap:8px">
+        <i data-lucide="arrow-down-left" style="width:14px;height:14px;color:var(--green)"></i>
+        <p style="font-size:13.5px;font-weight:600;color:var(--text)">Received (Credited)</p>
       </div>
-      <div class="divide-y divide-slate-700/30">
+      <div>
         {% for tx in received %}
-        <div class="px-5 py-3.5 flex items-center justify-between">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)">
           <div>
-            <p class="text-sm font-medium text-white">{{ tx.sender_client.client_name }}</p>
-            <p class="text-xs text-slate-500">{{ tx.transaction_date }} • {{ tx.description|default:"—" }}</p>
+            <p style="font-size:13px;font-weight:500;color:var(--text)">{{ tx.sender_client.client_name }}</p>
+            <p style="font-size:11px;color:var(--text3);margin-top:2px">{{ tx.transaction_date }} · {{ tx.description|default:"—" }}</p>
           </div>
-          <span class="text-sm font-bold text-green-400">+₹{{ tx.amount|floatformat:2 }}</span>
+          <span style="font-size:13px;font-weight:700;color:var(--cr)">+₹{{ tx.amount|floatformat:2 }}</span>
         </div>
         {% empty %}
-        <div class="px-5 py-8 text-center text-slate-600 text-sm">No received transactions</div>
+        <div style="padding:32px 16px;text-align:center;color:var(--text3);font-size:13px">No received transactions</div>
         {% endfor %}
       </div>
     </div>
   </div>
 </div>
+<style>@media(max-width:900px){.responsive-grid{grid-template-columns:1fr!important}}</style>
 {% endblock %}

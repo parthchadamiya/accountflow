@@ -5,210 +5,207 @@
 
 {% block content %}
 <!-- Stat Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px">
 
-  <!-- Total Clients -->
-  <div class="stat-card glass rounded-2xl p-5 border border-slate-700/50 neon-blue animate-slide-up" style="animation-delay:0.05s">
-    <div class="flex items-center justify-between mb-4">
-      <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-        <i data-lucide="users" class="w-5 h-5 text-blue-400"></i>
+  <div class="stat-card animate-slide-up" style="animation-delay:.05s">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="width:40px;height:40px;border-radius:12px;background:rgba(99,102,241,.12);display:flex;align-items:center;justify-content:center">
+        <i data-lucide="users" style="width:18px;height:18px;color:var(--accent)"></i>
       </div>
-      <span class="text-xs font-medium text-green-400 bg-green-400/10 px-2 py-1 rounded-full flex items-center gap-1">
-        <i data-lucide="trending-up" class="w-3 h-3"></i> Active
+      <span class="badge badge-green">
+        <span class="dot dot-green"></span> Active
       </span>
     </div>
-    <p class="text-3xl font-black text-white" data-count="{{ total_clients }}">0</p>
-    <p class="text-sm text-slate-400 mt-1">Total Clients</p>
-    <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
-      <div class="progress-bar h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" style="width:75%"></div>
-    </div>
+    <p style="font-size:28px;font-weight:800;color:var(--text);letter-spacing:-.5px" data-count="{{ total_clients }}">0</p>
+    <p style="font-size:13px;color:var(--text2);margin-top:4px">Total Clients</p>
+    <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
   </div>
 
-  <!-- Total Debit -->
-  <div class="stat-card glass rounded-2xl p-5 border border-slate-700/50 animate-slide-up" style="animation-delay:0.1s">
-    <div class="flex items-center justify-between mb-4">
-      <div class="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
-        <i data-lucide="arrow-up-right" class="w-5 h-5 text-red-400"></i>
+  <div class="stat-card animate-slide-up" style="animation-delay:.1s">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="width:40px;height:40px;border-radius:12px;background:rgba(239,68,68,.1);display:flex;align-items:center;justify-content:center">
+        <i data-lucide="arrow-up-right" style="width:18px;height:18px;color:var(--red)"></i>
       </div>
-      <span class="text-xs font-medium text-red-400 bg-red-400/10 px-2 py-1 rounded-full">Debit</span>
+      <span class="badge badge-red">Debit</span>
     </div>
-    <p class="text-3xl font-black text-white">₹<span data-count="{{ total_debit }}">0</span></p>
-    <p class="text-sm text-slate-400 mt-1">Total Debited</p>
-    <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
-      <div class="progress-bar h-full bg-gradient-to-r from-red-500 to-rose-500 rounded-full" style="width:60%"></div>
-    </div>
+    <p style="font-size:28px;font-weight:800;color:var(--text);letter-spacing:-.5px">₹<span data-count="{{ total_debit }}">0</span></p>
+    <p style="font-size:13px;color:var(--text2);margin-top:4px">Total Debited</p>
+    <div class="progress-bar"><div class="progress-fill" style="width:60%;background:linear-gradient(90deg,#ef4444,#f87171)"></div></div>
   </div>
 
-  <!-- Total Credit -->
-  <div class="stat-card glass rounded-2xl p-5 border border-slate-700/50 neon-green animate-slide-up" style="animation-delay:0.15s">
-    <div class="flex items-center justify-between mb-4">
-      <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-        <i data-lucide="arrow-down-left" class="w-5 h-5 text-green-400"></i>
+  <div class="stat-card animate-slide-up" style="animation-delay:.15s">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="width:40px;height:40px;border-radius:12px;background:rgba(16,185,129,.1);display:flex;align-items:center;justify-content:center">
+        <i data-lucide="arrow-down-left" style="width:18px;height:18px;color:var(--green)"></i>
       </div>
-      <span class="text-xs font-medium text-green-400 bg-green-400/10 px-2 py-1 rounded-full">Credit</span>
+      <span class="badge badge-green">Credit</span>
     </div>
-    <p class="text-3xl font-black text-white">₹<span data-count="{{ total_credit }}">0</span></p>
-    <p class="text-sm text-slate-400 mt-1">Total Credited</p>
-    <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
-      <div class="progress-bar h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style="width:85%"></div>
-    </div>
+    <p style="font-size:28px;font-weight:800;color:var(--text);letter-spacing:-.5px">₹<span data-count="{{ total_credit }}">0</span></p>
+    <p style="font-size:13px;color:var(--text2);margin-top:4px">Total Credited</p>
+    <div class="progress-bar"><div class="progress-fill" style="width:85%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
   </div>
 
-  <!-- Net Balance -->
-  <div class="stat-card glass rounded-2xl p-5 border border-slate-700/50 neon-purple animate-slide-up" style="animation-delay:0.2s">
-    <div class="flex items-center justify-between mb-4">
-      <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-        <i data-lucide="wallet" class="w-5 h-5 text-purple-400"></i>
+  <div class="stat-card animate-slide-up" style="animation-delay:.2s">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="width:40px;height:40px;border-radius:12px;background:rgba(139,92,246,.12);display:flex;align-items:center;justify-content:center">
+        <i data-lucide="wallet" style="width:18px;height:18px;color:#8b5cf6"></i>
       </div>
-      <span class="text-xs font-medium text-purple-400 bg-purple-400/10 px-2 py-1 rounded-full">Balance</span>
+      <span class="badge" style="background:rgba(139,92,246,.12);color:#8b5cf6">Net</span>
     </div>
-    <p class="text-3xl font-black {% if balance >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
+    <p style="font-size:28px;font-weight:800;letter-spacing:-.5px;color:{% if balance >= 0 %}var(--green){% else %}var(--red){% endif %}">
       {% if balance >= 0 %}+{% endif %}₹<span data-count="{{ balance }}">0</span>
     </p>
-    <p class="text-sm text-slate-400 mt-1">Net Balance</p>
-    <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
-      <div class="progress-bar h-full bg-gradient-to-r from-purple-500 to-violet-500 rounded-full" style="width:50%"></div>
-    </div>
+    <p style="font-size:13px;color:var(--text2);margin-top:4px">Net Balance</p>
+    <div class="progress-bar"><div class="progress-fill" style="width:50%;background:linear-gradient(90deg,#8b5cf6,#a78bfa)"></div></div>
   </div>
+
 </div>
 
-<!-- Chart + Recent Transactions -->
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-6">
+<!-- Chart + Quick Stats -->
+<div style="display:grid;grid-template-columns:1fr 300px;gap:16px;margin-bottom:20px" class="responsive-grid">
   <!-- Chart -->
-  <div class="xl:col-span-2 glass rounded-2xl p-5 border border-slate-700/50 animate-fade-in" style="animation-delay:0.25s">
-    <div class="flex items-center justify-between mb-5">
+  <div class="card animate-fade-in" style="animation-delay:.25s">
+    <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
       <div>
-        <h3 class="text-white font-semibold">Transaction Overview</h3>
-        <p class="text-slate-400 text-xs mt-0.5">Last 6 months</p>
+        <p style="font-size:14px;font-weight:700;color:var(--text)">Transaction Overview</p>
+        <p style="font-size:11.5px;color:var(--text3);margin-top:2px">Last 6 months activity</p>
       </div>
-      <div class="flex items-center gap-4 text-xs">
-        <span class="flex items-center gap-1.5 text-slate-400"><span class="w-3 h-3 rounded-sm bg-red-500 inline-block"></span>Debit</span>
-        <span class="flex items-center gap-1.5 text-slate-400"><span class="w-3 h-3 rounded-sm bg-green-500 inline-block"></span>Credit</span>
+      <div style="display:flex;align-items:center;gap:14px;font-size:12px;color:var(--text2)">
+        <span style="display:flex;align-items:center;gap:6px">
+          <span style="width:10px;height:10px;border-radius:3px;background:#ef4444;display:inline-block"></span>Debit
+        </span>
+        <span style="display:flex;align-items:center;gap:6px">
+          <span style="width:10px;height:10px;border-radius:3px;background:#10b981;display:inline-block"></span>Credit
+        </span>
       </div>
     </div>
-    <canvas id="transactionChart" class="w-full" height="200"></canvas>
+    <div class="card-body">
+      <canvas id="txChart" height="180"></canvas>
+    </div>
   </div>
 
   <!-- Quick Stats -->
-  <div class="glass rounded-2xl p-5 border border-slate-700/50 animate-fade-in" style="animation-delay:0.3s">
-    <h3 class="text-white font-semibold mb-4">Quick Stats</h3>
-    <div class="space-y-4">
-      <div class="flex items-center justify-between p-3 bg-slate-800/40 rounded-xl">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-            <i data-lucide="activity" class="w-4 h-4 text-blue-400"></i>
+  <div class="card animate-fade-in" style="animation-delay:.3s">
+    <div class="card-header">
+      <p style="font-size:14px;font-weight:700;color:var(--text)">Quick Stats</p>
+    </div>
+    <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+      <div class="info-row" style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(99,102,241,.1);display:flex;align-items:center;justify-content:center">
+            <i data-lucide="activity" style="width:14px;height:14px;color:var(--accent)"></i>
           </div>
           <div>
-            <p class="text-xs text-slate-400">Transactions</p>
-            <p class="text-sm font-bold text-white">{{ total_transactions }}</p>
+            <p style="font-size:11px;color:var(--text3)">Transfers</p>
+            <p style="font-size:14px;font-weight:700;color:var(--text)">{{ total_transactions }}</p>
           </div>
         </div>
-        <i data-lucide="arrow-right" class="w-4 h-4 text-slate-600"></i>
+        <i data-lucide="chevron-right" style="width:14px;height:14px;color:var(--text3)"></i>
       </div>
-      <div class="flex items-center justify-between p-3 bg-slate-800/40 rounded-xl">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
-            <i data-lucide="check-circle-2" class="w-4 h-4 text-green-400"></i>
+      <div class="info-row" style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(16,185,129,.1);display:flex;align-items:center;justify-content:center">
+            <i data-lucide="users" style="width:14px;height:14px;color:var(--green)"></i>
           </div>
           <div>
-            <p class="text-xs text-slate-400">Active Clients</p>
-            <p class="text-sm font-bold text-white">{{ total_clients }}</p>
+            <p style="font-size:11px;color:var(--text3)">Active Clients</p>
+            <p style="font-size:14px;font-weight:700;color:var(--text)">{{ total_clients }}</p>
           </div>
         </div>
-        <i data-lucide="arrow-right" class="w-4 h-4 text-slate-600"></i>
+        <i data-lucide="chevron-right" style="width:14px;height:14px;color:var(--text3)"></i>
       </div>
-      <div class="flex items-center justify-between p-3 bg-slate-800/40 rounded-xl">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center">
-            <i data-lucide="zap" class="w-4 h-4 text-yellow-400"></i>
+      <div class="info-row" style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center">
+            <i data-lucide="zap" style="width:14px;height:14px;color:var(--amber)"></i>
           </div>
           <div>
-            <p class="text-xs text-slate-400">Avg Transaction</p>
-            <p class="text-sm font-bold text-white">
+            <p style="font-size:11px;color:var(--text3)">Avg Transfer</p>
+            <p style="font-size:14px;font-weight:700;color:var(--text)">
               {% if total_transactions > 0 %}₹{% widthratio total_debit total_transactions 1 %}{% else %}₹0{% endif %}
             </p>
           </div>
         </div>
-        <i data-lucide="arrow-right" class="w-4 h-4 text-slate-600"></i>
+        <i data-lucide="chevron-right" style="width:14px;height:14px;color:var(--text3)"></i>
       </div>
       <a href="{% url 'trial_balance' %}"
-         class="flex items-center justify-between p-3 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 rounded-xl transition-colors cursor-pointer group">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-            <i data-lucide="file-text" class="w-4 h-4 text-blue-400"></i>
+         style="display:flex;align-items:center;justify-content:space-between;background:var(--glow);border:1px solid rgba(99,102,241,.2);border-radius:9px;padding:10px 14px;text-decoration:none;transition:background .15s">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(99,102,241,.15);display:flex;align-items:center;justify-content:center">
+            <i data-lucide="bar-chart-2" style="width:14px;height:14px;color:var(--accent)"></i>
           </div>
           <div>
-            <p class="text-xs text-slate-400">Trial Balance</p>
-            <p class="text-sm font-bold text-blue-400">View Report</p>
+            <p style="font-size:11px;color:var(--text3)">Trial Balance</p>
+            <p style="font-size:13px;font-weight:600;color:var(--accent)">View Report</p>
           </div>
         </div>
-        <i data-lucide="arrow-right" class="w-4 h-4 text-blue-400 group-hover:translate-x-1 transition-transform"></i>
+        <i data-lucide="arrow-right" style="width:14px;height:14px;color:var(--accent)"></i>
       </a>
     </div>
   </div>
 </div>
 
 <!-- Recent Transactions -->
-<div class="glass rounded-2xl border border-slate-700/50 animate-fade-in" style="animation-delay:0.35s">
-  <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700/50">
+<div class="card animate-fade-in" style="animation-delay:.35s">
+  <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
     <div>
-      <h3 class="text-white font-semibold">Recent Transactions</h3>
-      <p class="text-slate-400 text-xs mt-0.5">Last 10 transfers</p>
+      <p style="font-size:14px;font-weight:700;color:var(--text)">Recent Transactions</p>
+      <p style="font-size:11.5px;color:var(--text3);margin-top:2px">Last 10 transfers</p>
     </div>
-    <a href="{% url 'transaction_list' %}" class="text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors flex items-center gap-1">
-      View all <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+    <a href="{% url 'transaction_list' %}" class="btn btn-ghost btn-sm">
+      View all <i data-lucide="arrow-right" style="width:12px;height:12px"></i>
     </a>
   </div>
-  <div class="overflow-x-auto">
-    <table class="data-table w-full">
+  <div style="overflow-x:auto">
+    <table class="af-table">
       <thead>
-        <tr class="border-b border-slate-700/30">
-          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Sender</th>
-          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Receiver</th>
-          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">Description</th>
-          <th class="text-right px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Amount</th>
-          <th class="text-right px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Date</th>
+        <tr>
+          <th>Sender</th>
+          <th>Receiver</th>
+          <th class="hidden md:table-cell">Description</th>
+          <th class="r">Amount</th>
+          <th class="r hidden sm:table-cell">Date</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-700/30">
+      <tbody>
         {% for tx in recent_transactions %}
         <tr>
-          <td class="px-5 py-3.5">
-            <div class="flex items-center gap-2.5">
-              <div class="w-7 h-7 rounded-full bg-gradient-to-br from-red-400 to-rose-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+          <td>
+            <div style="display:flex;align-items:center;gap:9px">
+              <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f87171,#ef4444);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0">
                 {{ tx.sender_client.client_name|slice:":1"|upper }}
               </div>
-              <span class="text-sm text-slate-200 font-medium truncate max-w-[120px]">{{ tx.sender_client.client_name }}</span>
+              <span style="font-size:13px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">{{ tx.sender_client.client_name }}</span>
             </div>
           </td>
-          <td class="px-5 py-3.5">
-            <div class="flex items-center gap-2.5">
-              <div class="w-7 h-7 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+          <td>
+            <div style="display:flex;align-items:center;gap:9px">
+              <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#34d399,#10b981);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0">
                 {{ tx.receiver_client.client_name|slice:":1"|upper }}
               </div>
-              <span class="text-sm text-slate-200 font-medium truncate max-w-[120px]">{{ tx.receiver_client.client_name }}</span>
+              <span style="font-size:13px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">{{ tx.receiver_client.client_name }}</span>
             </div>
           </td>
-          <td class="px-5 py-3.5 hidden md:table-cell">
-            <span class="text-sm text-slate-400 truncate max-w-[150px] block">{{ tx.description|default:"—" }}</span>
+          <td class="hidden md:table-cell">
+            <span style="font-size:13px;color:var(--text2)">{{ tx.description|default:"—" }}</span>
           </td>
-          <td class="px-5 py-3.5 text-right">
-            <span class="text-sm font-bold text-red-400">-₹{{ tx.amount|floatformat:2 }}</span>
+          <td class="r">
+            <span style="font-size:13px;font-weight:700;color:var(--red)">-₹{{ tx.amount|floatformat:2 }}</span>
           </td>
-          <td class="px-5 py-3.5 text-right hidden sm:table-cell">
-            <span class="text-xs text-slate-500">{{ tx.transaction_date }}</span>
+          <td class="r hidden sm:table-cell">
+            <span style="font-size:12px;color:var(--text3)">{{ tx.transaction_date }}</span>
           </td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="5" class="px-5 py-12 text-center">
-            <div class="flex flex-col items-center gap-3">
-              <div class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center">
-                <i data-lucide="arrow-left-right" class="w-6 h-6 text-slate-600"></i>
+          <td colspan="5">
+            <div class="empty-state">
+              <div class="empty-icon animate-float">
+                <i data-lucide="arrow-left-right" style="width:22px;height:22px"></i>
               </div>
-              <p class="text-slate-500 text-sm">No transactions yet.</p>
-              <a href="{% url 'transaction_create' %}" class="btn-primary text-white text-xs font-medium px-4 py-2 rounded-lg">
-                Create First Transfer
+              <p style="font-size:13.5px;font-weight:600;color:var(--text2)">No transactions yet</p>
+              <a href="{% url 'transaction_create' %}" class="btn btn-primary btn-sm">
+                <i data-lucide="plus" style="width:13px;height:13px"></i> Create First Transfer
               </a>
             </div>
           </td>
@@ -218,37 +215,44 @@
     </table>
   </div>
 </div>
+
+<style>
+  @media(max-width:900px){ .responsive-grid { grid-template-columns:1fr !important; } }
+</style>
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const ctx = document.getElementById('transactionChart').getContext('2d');
-  const months = {{ months_json|safe }};
-  const debitData = {{ debit_data_json|safe }};
-  const creditData = {{ credit_data_json|safe }};
+  const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light';
+  const gridColor  = () => isDark() ? 'rgba(255,255,255,0.05)' : 'rgba(99,102,241,0.07)';
+  const tickColor  = () => isDark() ? '#3a4257' : '#9ca3af';
+  const tooltipBg  = () => isDark() ? '#131722' : '#ffffff';
+  const tooltipTxt = () => isDark() ? '#e8eeff' : '#0f172a';
+  const tooltipBrd = () => isDark() ? 'rgba(255,255,255,0.08)' : 'rgba(99,102,241,0.15)';
 
-  new Chart(ctx, {
+  const ctx = document.getElementById('txChart').getContext('2d');
+  const chart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: months,
+      labels: {{ months_json|safe }},
       datasets: [
         {
           label: 'Debit',
-          data: debitData,
-          backgroundColor: 'rgba(239, 68, 68, 0.6)',
+          data: {{ debit_data_json|safe }},
+          backgroundColor: 'rgba(239,68,68,.6)',
           borderColor: '#ef4444',
           borderWidth: 1,
-          borderRadius: 6,
+          borderRadius: 5,
           borderSkipped: false,
         },
         {
           label: 'Credit',
-          data: creditData,
-          backgroundColor: 'rgba(16, 185, 129, 0.6)',
+          data: {{ credit_data_json|safe }},
+          backgroundColor: 'rgba(16,185,129,.6)',
           borderColor: '#10b981',
           borderWidth: 1,
-          borderRadius: 6,
+          borderRadius: 5,
           borderSkipped: false,
         }
       ]
@@ -260,30 +264,43 @@
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: 'rgba(15, 23, 42, 0.95)',
-          titleColor: '#94a3b8',
-          bodyColor: '#e2e8f0',
-          borderColor: 'rgba(255,255,255,0.1)',
+          backgroundColor: tooltipBg(),
+          titleColor: tickColor(),
+          bodyColor: tooltipTxt(),
+          borderColor: tooltipBrd(),
           borderWidth: 1,
           padding: 12,
           callbacks: {
-            label: ctx => ` ₹${ctx.parsed.y.toLocaleString('en-IN', {minimumFractionDigits:2})}`,
+            label: c => ` ₹${c.parsed.y.toLocaleString('en-IN',{minimumFractionDigits:2})}`
           }
         }
       },
       scales: {
         x: {
-          grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
-          ticks: { color: '#64748b', font: { size: 11 } },
-          border: { display: false },
+          grid: { color: gridColor(), drawBorder: false },
+          ticks: { color: tickColor(), font: { size: 11 } },
+          border: { display: false }
         },
         y: {
-          grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
-          ticks: { color: '#64748b', font: { size: 11 }, callback: v => '₹'+v.toLocaleString() },
-          border: { display: false },
+          grid: { color: gridColor(), drawBorder: false },
+          ticks: { color: tickColor(), font: { size: 11 }, callback: v => '₹' + v.toLocaleString() },
+          border: { display: false }
         }
       }
     }
   });
+
+  // Re-style chart on theme change
+  const mo = new MutationObserver(() => {
+    chart.options.scales.x.grid.color = gridColor();
+    chart.options.scales.y.grid.color = gridColor();
+    chart.options.scales.x.ticks.color = tickColor();
+    chart.options.scales.y.ticks.color = tickColor();
+    chart.options.plugins.tooltip.backgroundColor = tooltipBg();
+    chart.options.plugins.tooltip.bodyColor = tooltipTxt();
+    chart.options.plugins.tooltip.borderColor = tooltipBrd();
+    chart.update('none');
+  });
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 </script>
 {% endblock %}

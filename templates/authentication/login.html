@@ -1,119 +1,129 @@
 {% extends 'base.html' %}
-{% block title %}Login — AccountFlow{% endblock %}
+{% block title %}Sign In — AccountFlow{% endblock %}
 
 {% block auth_content %}
-<div class="min-h-screen animated-bg flex items-center justify-center p-4 relative overflow-hidden">
-  <!-- Animated background orbs -->
-  <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
-  <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none" style="animation-delay:1s"></div>
-  <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+<style>
+  .login-page {
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:var(--bg); padding:24px;
+    background-image:
+      radial-gradient(ellipse 70% 55% at 30% 20%, rgba(99,102,241,.13), transparent 60%),
+      radial-gradient(ellipse 55% 45% at 75% 75%, rgba(139,92,246,.09), transparent 60%);
+  }
+  .login-box {
+    width:100%; max-width:410px;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:20px; overflow:hidden;
+    box-shadow:0 24px 64px var(--shadow);
+    animation:slideUp .4s ease-out;
+  }
+  [data-theme="light"] .login-box { box-shadow:0 24px 64px rgba(99,102,241,.12); }
+  .login-hero {
+    padding:30px 30px 22px; text-align:center;
+    background:linear-gradient(135deg, rgba(99,102,241,.1), rgba(139,92,246,.06));
+    border-bottom:1px solid var(--border);
+  }
+  .login-logo-icon {
+    width:54px; height:54px; border-radius:16px;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 14px;
+    box-shadow:0 8px 24px rgba(99,102,241,.45);
+    animation:float 4s ease-in-out infinite;
+  }
+  .login-body { padding:26px 30px 30px; }
+</style>
 
-  <!-- Grid pattern overlay -->
-  <div class="absolute inset-0 pointer-events-none"
-       style="background-image: linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px); background-size: 50px 50px;"></div>
+<div class="login-page" x-data="loginPage()">
+  <!-- Theme toggle -->
+  <div style="position:fixed;top:16px;right:16px">
+    <button class="theme-btn" @click="toggleTheme()">
+      <i :data-lucide="theme==='dark'?'sun':'moon'" style="width:15px;height:15px"></i>
+    </button>
+  </div>
 
-  <div class="relative w-full max-w-md animate-slide-up">
-    <!-- Logo section -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-700 neon-blue mb-4 animate-float">
-        <i data-lucide="trending-up" class="w-10 h-10 text-white"></i>
+  <div class="login-box">
+    <div class="login-hero">
+      <div class="login-logo-icon">
+        <i data-lucide="trending-up" style="width:24px;height:24px;color:#fff"></i>
       </div>
-      <h1 class="text-3xl font-black text-white tracking-tight">AccountFlow</h1>
-      <p class="text-slate-400 mt-1 text-sm">Finance Management Platform</p>
+      <h1 style="font-size:21px;font-weight:800;color:var(--text);letter-spacing:-.4px">AccountFlow</h1>
+      <p style="font-size:12.5px;color:var(--text2);margin-top:4px">Finance & Account Management</p>
     </div>
 
-    <!-- Login Card -->
-    <div class="glass rounded-2xl p-8 border border-slate-700/50 shadow-2xl"
-         x-data="{ loading: false, showPass: false }">
-      <h2 class="text-xl font-bold text-white mb-1">Welcome back</h2>
-      <p class="text-slate-400 text-sm mb-6">Sign in to your account to continue</p>
+    <div class="login-body">
+      <p style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px">Welcome back</p>
+      <p style="font-size:12.5px;color:var(--text3);margin-bottom:22px">Enter your account code to continue</p>
 
       {% if messages %}
-      {% for message in messages %}
-      <div class="mb-4 flex items-center gap-2 bg-red-900/40 border border-red-500/30 rounded-xl px-4 py-3 animate-fade-in">
-        <i data-lucide="alert-circle" class="w-4 h-4 text-red-400 flex-shrink-0"></i>
-        <p class="text-sm text-red-300">{{ message }}</p>
-      </div>
-      {% endfor %}
+        {% for msg in messages %}
+        <div class="alert alert-red animate-fade-in" style="margin-bottom:16px;font-size:13px">
+          <i data-lucide="alert-circle" style="width:14px;height:14px;flex-shrink:0"></i>
+          {{ msg }}
+        </div>
+        {% endfor %}
       {% endif %}
 
-      <form method="post" @submit="loading = true" class="space-y-5">
+      <form method="post" action="{% url 'login' %}" x-data="{ showPass: false }" @submit="$el.querySelector('[type=submit]').disabled=true">
         {% csrf_token %}
-        <!-- Code Field -->
-        <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">User Code</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i data-lucide="hash" class="w-4 h-4 text-slate-500"></i>
-            </div>
-            <input
-              type="text"
-              name="code"
-              value="{{ code|default:'' }}"
-              placeholder="e.g. ADMIN001"
-              required
-              class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-4 py-3 text-sm transition-all duration-200 focus:border-blue-500 focus:bg-slate-800"
-            />
+
+        <div style="margin-bottom:14px">
+          <label class="form-label">Account Code</label>
+          <div class="input-wrap">
+            <i data-lucide="hash" class="input-icon"></i>
+            <input type="text" name="code" required autocomplete="username"
+                   value="{{ code|default:'' }}" placeholder="e.g. ADMIN001"
+                   style="text-transform:uppercase" class="form-input font-mono" autofocus />
           </div>
         </div>
 
-        <!-- Password Field -->
-        <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i data-lucide="lock" class="w-4 h-4 text-slate-500"></i>
-            </div>
-            <input
-              :type="showPass ? 'text' : 'password'"
-              name="password"
-              placeholder="Enter your password"
-              required
-              class="input-glow w-full bg-slate-800/50 border border-slate-600/50 text-white placeholder-slate-500 rounded-xl pl-10 pr-12 py-3 text-sm transition-all duration-200 focus:border-blue-500 focus:bg-slate-800"
-            />
-            <button type="button" @click="showPass = !showPass"
-                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200 transition-colors">
-              <i :data-lucide="showPass ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
+        <div style="margin-bottom:20px">
+          <label class="form-label">Password</label>
+          <div class="input-wrap">
+            <i data-lucide="lock" class="input-icon"></i>
+            <input :type="showPass?'text':'password'" name="password" required autocomplete="current-password"
+                   placeholder="Enter your password" class="form-input" style="padding-right:40px" />
+            <button type="button" @click="showPass=!showPass"
+                    style="position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex">
+              <i :data-lucide="showPass?'eye-off':'eye'" style="width:15px;height:15px"></i>
             </button>
           </div>
         </div>
 
-        <!-- Submit -->
-        <button type="submit"
-                class="btn-primary w-full text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 mt-2 ripple"
-                :disabled="loading">
-          <template x-if="loading">
-            <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-            </svg>
-          </template>
-          <template x-if="!loading">
-            <i data-lucide="log-in" class="w-4 h-4"></i>
-          </template>
-          <span x-text="loading ? 'Signing in...' : 'Sign In'">Sign In</span>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:11px 16px;font-size:14px">
+          <i data-lucide="log-in" style="width:15px;height:15px"></i>
+          Sign In
         </button>
       </form>
 
-      <!-- Default Credentials hint -->
-      <div class="mt-6 p-3 bg-blue-900/20 border border-blue-500/20 rounded-xl">
-        <p class="text-xs text-blue-400 font-medium mb-1">Default Credentials</p>
-        <p class="text-xs text-slate-400">Code: <code class="text-blue-300 font-mono">ADMIN001</code></p>
-        <p class="text-xs text-slate-400">Password: <code class="text-blue-300 font-mono">Admin@123</code></p>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <p style="font-size:11px;color:var(--text3);text-align:center;text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:10px">Demo Credentials</p>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text3);background:var(--nav-bg);border:1px solid var(--border);padding:3px 10px;border-radius:99px">
+            <i data-lucide="user" style="width:11px;height:11px"></i> ADMIN001
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text3);background:var(--nav-bg);border:1px solid var(--border);padding:3px 10px;border-radius:99px">
+            <i data-lucide="key" style="width:11px;height:11px"></i> Admin@123
+          </span>
+        </div>
       </div>
     </div>
-
-    <!-- Footer -->
-    <p class="text-center text-slate-600 text-xs mt-6">
-      © 2025 AccountFlow. All rights reserved.
-    </p>
   </div>
 </div>
 
 <script>
-  lucide.createIcons();
-  document.addEventListener('alpine:init', () => {
-    setTimeout(() => lucide.createIcons(), 50);
-  });
+function loginPage() {
+  return {
+    theme: document.documentElement.getAttribute('data-theme') || 'dark',
+    toggleTheme() {
+      this.theme = this.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', this.theme);
+      localStorage.setItem('af-theme', this.theme);
+      setTimeout(() => lucide.createIcons(), 50);
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+document.addEventListener('alpine:initialized', () => lucide.createIcons());
 </script>
 {% endblock %}
