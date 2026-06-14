@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}Users — AccountFlow{% endblock %}
+{% block page_title %}User Management{% endblock %}
+{% block page_subtitle %}Manage admin and staff accounts{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6 animate-slide-up">
+  <p class="text-slate-400 text-sm flex items-center gap-2">
+    <i data-lucide="shield" class="w-4 h-4"></i>
+    {{ users|length }} user{{ users|length|pluralize }}
+  </p>
+  <a href="{% url 'user_create' %}"
+     class="btn-primary text-white text-sm font-medium px-4 py-2.5 rounded-xl flex items-center gap-2">
+    <i data-lucide="user-plus" class="w-4 h-4"></i> Add User
+  </a>
+</div>
+
+<div class="glass rounded-2xl border border-slate-700/50 overflow-hidden animate-fade-in">
+  <div class="overflow-x-auto">
+    <table class="data-table w-full">
+      <thead>
+        <tr class="border-b border-slate-700/50 bg-slate-800/30">
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">User</th>
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Code</th>
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">Email</th>
+          <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Role</th>
+          <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Status</th>
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Created</th>
+          <th class="text-right px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-700/30">
+        {% for u in users %}
+        <tr class="animate-fade-in">
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0
+                          {% if u.role == 'ADMIN' %}bg-gradient-to-br from-purple-500 to-indigo-600{% else %}bg-gradient-to-br from-blue-400 to-cyan-500{% endif %}">
+                {{ u.name|slice:":1"|upper }}
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-white">
+                  {{ u.name }}
+                  {% if u == request.user %}
+                  <span class="ml-1 text-xs text-blue-400 font-normal">(you)</span>
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td class="px-5 py-4">
+            <span class="text-xs font-mono bg-slate-800 text-blue-300 px-2 py-1 rounded-lg">{{ u.code }}</span>
+          </td>
+          <td class="px-5 py-4 hidden md:table-cell">
+            <span class="text-sm text-slate-400">{{ u.email|default:"—" }}</span>
+          </td>
+          <td class="px-5 py-4 text-center">
+            {% if u.role == 'ADMIN' %}
+            <span class="inline-flex items-center gap-1 text-xs font-semibold text-purple-400 bg-purple-400/10 px-2.5 py-1 rounded-full">
+              <i data-lucide="shield-check" class="w-3 h-3"></i> Admin
+            </span>
+            {% else %}
+            <span class="inline-flex items-center gap-1 text-xs font-semibold text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-full">
+              <i data-lucide="user" class="w-3 h-3"></i> Staff
+            </span>
+            {% endif %}
+          </td>
+          <td class="px-5 py-4 text-center hidden sm:table-cell">
+            {% if u.is_active %}
+            <span class="inline-flex items-center gap-1 text-xs text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Active
+            </span>
+            {% else %}
+            <span class="inline-flex items-center gap-1 text-xs text-slate-400 bg-slate-700/40 px-2.5 py-1 rounded-full">
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Inactive
+            </span>
+            {% endif %}
+          </td>
+          <td class="px-5 py-4 hidden lg:table-cell">
+            <span class="text-xs text-slate-500">{{ u.created_at|date:"M d, Y" }}</span>
+          </td>
+          <td class="px-5 py-4 text-right">
+            <div class="flex items-center justify-end gap-1">
+              <a href="{% url 'user_update' u.pk %}"
+                 class="p-1.5 rounded-lg text-slate-400 hover:text-yellow-400 hover:bg-yellow-400/10 transition-all" title="Edit">
+                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+              </a>
+              {% if u != request.user %}
+              <form method="post" action="{% url 'user_delete' u.pk %}"
+                    x-data="{}" @submit.prevent="if(confirm('Delete {{ u.name }}?')) $el.submit()">
+                {% csrf_token %}
+                <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-all" title="Delete">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </form>
+              {% else %}
+              <span class="p-1.5 text-slate-700 cursor-not-allowed" title="Cannot delete your own account">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </span>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="px-5 py-16 text-center">
+            <div class="flex flex-col items-center gap-3">
+              <i data-lucide="users" class="w-8 h-8 text-slate-600"></i>
+              <p class="text-slate-500">No users found.</p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
